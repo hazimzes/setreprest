@@ -45,8 +45,11 @@ Hevy-style set logging. Principles, in priority order:
   9px W/D letter, not a pill.
 - Rest pill: raised surface, hairline border, 6px inner controls.
 
-### Library
-- One divided panel of rows; search h-9; filter chips h-7; favourites star right-aligned.
+### Progress
+- Verdict panel (accent text only when improving), 3 stat tiles, then chart panels.
+- Multi-series strength chart uses the validated 4-hue chart palette
+  (`--app-chart-1..4`), legend below, no dual axes.
+- Library: one divided panel of rows; search h-9; filter chips h-7.
 
 ### History / Session detail
 - Month-grouped rows in divided panels; tnum metadata; gym badges as neutral chips.

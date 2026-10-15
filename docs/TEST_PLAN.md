@@ -14,8 +14,8 @@ npm run lint
 npm run build
 ```
 
-Latest executed results: **61/61 unit & component tests pass** (6 files),
-**12/12 e2e tests pass**, typecheck PASS, lint PASS (0 problems),
+Latest executed results: **68/68 unit & component tests pass** (7 files),
+**13/13 e2e tests pass**, typecheck PASS, lint PASS (0 problems),
 production build PASS (base `/setreprest/` verified in output).
 
 ## 6. Gym feature (added 2026-10-15)
@@ -38,6 +38,19 @@ production build PASS (base `/setreprest/` verified in output).
 | 7.2 | Load through the store: state populated, second load idempotent (stable `demo-` ids merge) | PASS — integration |
 | 7.3 | Demo merge passes full backup validation (checksum + referential checks) | PASS — exercises exercised via import path |
 | 7.4 | Charts read chronologically; per-gym PR/history scoping correct (PR card follows gym filter) | PASS — visual + programmatic check; chart sort bug found & fixed |
+
+## 8. Progress page (added 2026-10-15)
+
+| # | Case | Result |
+|---|------|--------|
+| 8.1 | weeklyBuckets: weekly volume/session windows oldest-first | PASS — `progress.test.ts` |
+| 8.2 | trendOf: improving / declining / flat thresholds, short-series guard | PASS |
+| 8.3 | streakWeeks: consecutive weeks with a session, gap breaks | PASS |
+| 8.4 | strengthSeries: weekly best e1RM aligned to buckets, nulls off-week | PASS |
+| 8.5 | muscleVolume: split across muscle groups, BW rep proxy, sorted | PASS |
+| 8.6 | recentPrs: only improving bests inside window, newest first | PASS |
+| 8.7 | progressSummary: 28d vs prior-28d deltas | PASS |
+| 8.8 | E2E: demo data → Progress tab renders verdict, charts, PR feed, streak | PASS — e2e |
 
 ## 1. Domain unit tests (Vitest)
 

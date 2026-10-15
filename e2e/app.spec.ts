@@ -348,3 +348,24 @@ test('gym tabs: create gym → tagged workout → per-gym history and PR filteri
   await dismissSWOfferIfAny(page);
   await expect(page.getByRole('button', { name: 'Fitness First', exact: true })).toHaveAttribute('aria-pressed', 'true');
 });
+
+test('progress page renders trends from demo data', async ({ page }) => {
+  await page.goto(APP);
+  await dismissSWOfferIfAny(page);
+  // seed demo via settings
+  await page.goto(APP + '#/settings');
+  await page.getByRole('button', { name: 'Load demo dataset' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Load demo data' }).click();
+  await page.waitForSelector('text=Demo data loaded', { timeout: 15000 });
+
+  await page.getByRole('link', { name: 'Progress' }).click();
+  await page.waitForURL('**/setreprest/#/progress');
+  await expect(page.getByText(/Improving|Declining|Holding steady/)).toBeVisible();
+  await expect(page.getByText('Weekly volume')).toBeVisible();
+  await expect(page.getByText('Strength — est. 1RM, top lifts')).toBeVisible();
+  await expect(page.getByText('Personal records · 4 weeks')).toBeVisible();
+  // at least one recharts svg present
+  await expect(page.locator('svg.recharts-surface').first()).toBeVisible();
+  // streak tile present
+  await expect(page.getByText('Streak')).toBeVisible();
+});

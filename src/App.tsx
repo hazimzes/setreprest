@@ -5,6 +5,7 @@ import { ToastProvider } from './components/ui';
 import { AppShell } from './components/AppShell';
 import { PwaUpdateToast } from './pwa/PwaUpdateToast';
 import { HomePage } from './pages/HomePage';
+import { ProgressPage } from './pages/ProgressPage';
 import { WorkoutPage } from './pages/WorkoutPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { SessionDetailPage } from './pages/SessionDetailPage';
@@ -25,6 +26,7 @@ export default function App() {
           <AppShell>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/progress" element={<ProgressPage />} />
               <Route path="/workout" element={<WorkoutPage />} />
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/history/:id" element={<SessionDetailPage />} />

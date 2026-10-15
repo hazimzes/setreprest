@@ -30,6 +30,9 @@
   --app-danger: #c4321f;
   /* Chart series — validated for the light surface (dataviz band L 0.43–0.77). */
   --app-chart: #3f7d20;
+  --app-chart-2: #2f74ad;
+  --app-chart-3: #a56a1d;
+  --app-chart-4: #7d54b3;
 }
 
 .dark {
@@ -48,6 +51,9 @@
   --app-danger: #f07168;
   /* Chart series — validated for the dark surface (dataviz band L 0.48–0.67). */
   --app-chart: #699f2f;
+  --app-chart-2: #4a8ec2;
+  --app-chart-3: #bf7f26;
+  --app-chart-4: #a06fd1;
 }
 
 @theme inline {
@@ -65,6 +71,9 @@
   --color-accent-dim: var(--app-accent-dim);
   --color-danger: var(--app-danger);
   --color-chart: var(--app-chart);
+  --color-chart-2: var(--app-chart-2);
+  --color-chart-3: var(--app-chart-3);
+  --color-chart-4: var(--app-chart-4);
   --radius-control: 6px;
   --radius-input: 8px;
   --radius-panel: 10px;

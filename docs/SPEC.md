@@ -54,6 +54,15 @@ reviewing history and managing templates/library.
 - Starting a session from a template copies the structure into the session;
   the template itself is never modified by sessions.
 
+### Progress page (overall)
+- Verdict tile: trailing 4 weeks vs prior (Improving / Declining / Holding steady)
+  with volume delta % and session delta.
+- Stat tiles: weekly streak, 4-week weekly-average volume, PRs this month.
+- Charts: weekly volume (12 weeks), multi-line weekly best e1RM for the four most
+  trained lifts, volume-by-muscle horizontal bars (28 days).
+- Personal-record feed for the last 4 weeks.
+- Everything respects the gym filter — per-gym verdicts are independent.
+
 ### Progress & analytics (per exercise and overall)
 - Exercise detail: session history, set log, per-exercise personal records
   (heaviest working set by estimated 1RM), estimated 1RM progression chart

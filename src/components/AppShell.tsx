@@ -4,6 +4,7 @@ import { useAppStore } from '../state/appStore';
 
 const TABS = [
   { to: '/', label: 'Home', icon: 'M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1z' },
+  { to: '/progress', label: 'Progress', icon: 'M3 17l6-6 4 4 8-8M14 7h7v7' },
   { to: '/history', label: 'History', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
   { to: '/library', label: 'Library', icon: 'M4 6h16M4 12h16M4 18h10' },
   { to: '/templates', label: 'Templates', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },

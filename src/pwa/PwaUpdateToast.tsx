@@ -22,7 +22,7 @@ export function PwaUpdateToast() {
   return (
     <div
       role="status"
-      className="fixed inset-x-4 top-3 z-[70] mx-auto flex max-w-sm items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-sm shadow-lg"
+      className="fixed inset-x-4 top-3 z-[70] mx-auto flex max-w-sm items-center justify-between gap-3 rounded-[8px] border border-line bg-surface px-4 py-3 text-sm shadow-lg"
     >
       <span>A new version is available.</span>
       <button className="font-semibold text-accent" onClick={() => reload()}>

@@ -11,17 +11,17 @@ import {
 } from 'react';
 import { createId } from '../domain/id';
 
-/* ------------------------------ Icons ------------------------------- */
+/* ------------------------------- Icons ------------------------------- */
 
 export function PlusIcon({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
-      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
     </svg>
   );
 }
 
-/* ------------------------------ Button ------------------------------ */
+/* ------------------------------ Button ------------------------------- */
 
 type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'danger';
 
@@ -31,21 +31,26 @@ export function Button({
   ...rest
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
   const styles: Record<ButtonVariant, string> = {
-    primary:
-      'bg-accent text-accent-ink font-semibold hover:brightness-110 active:brightness-95',
-    outline: 'border border-line bg-surface hover:bg-raised',
-    ghost: 'hover:bg-raised',
-    danger: 'border border-danger/40 text-danger hover:bg-danger/10',
+    primary: 'bg-accent text-accent-ink font-semibold hover:brightness-110 active:brightness-95',
+    outline: 'border border-line-strong bg-surface text-fg hover:bg-raised',
+    ghost: 'text-secondary hover:bg-raised hover:text-fg',
+    danger: 'border border-danger/35 text-danger hover:bg-danger/10',
   };
   return (
     <button
-      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 ${styles[variant]} ${className}`}
+      className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-[6px] px-3 text-[13px] font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40 ${styles[variant]} ${className}`}
       {...rest}
     />
   );
 }
 
-/* ------------------------------- Chip ------------------------------- */
+/* ---------------------------- Micro label ---------------------------- */
+
+export function MicroLabel({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return <p className={`microlabel ${className}`}>{children}</p>;
+}
+
+/* ------------------------------- Chip -------------------------------- */
 
 export function Chip({
   active,
@@ -55,17 +60,17 @@ export function Chip({
   return (
     <button
       aria-pressed={active}
-      className={`min-h-9 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
+      className={`h-7 shrink-0 rounded-[6px] border px-2.5 text-xs font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-accent ${
         active
-          ? 'border-accent bg-accent-soft text-fg'
-          : 'border-line bg-surface text-muted hover:text-fg'
+          ? 'border-line-strong bg-hover text-fg'
+          : 'border-line bg-surface text-secondary hover:text-fg'
       } ${className}`}
       {...rest}
     />
   );
 }
 
-/* ------------------------------- Sheet ------------------------------ */
+/* ------------------------------- Sheet ------------------------------- */
 
 export function Sheet({
   open,
@@ -97,7 +102,7 @@ export function Sheet({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center">
       <button
         aria-label="Close overlay"
-        className="absolute inset-0 bg-black/60"
+        className="absolute inset-0 bg-black/50"
         onClick={onClose}
         tabIndex={-1}
       />
@@ -107,28 +112,28 @@ export function Sheet({
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="relative z-10 max-h-[88vh] w-full overflow-y-auto rounded-t-2xl border border-line bg-surface p-5 sm:max-w-md sm:rounded-2xl"
+        className="relative z-10 max-h-[88vh] w-full overflow-y-auto rounded-t-[10px] border border-line bg-surface focus:outline-none sm:max-w-sm sm:rounded-[10px]"
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold">{title}</h2>
+        <div className="flex items-center justify-between border-b border-line px-4 py-3">
+          <h2 className="text-sm font-semibold tracking-tight">{title}</h2>
           <button
             aria-label="Close"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted hover:bg-raised hover:text-fg"
+            className="-mr-1 rounded-[6px] p-1 text-muted hover:bg-raised hover:text-fg"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </button>
         </div>
-        {children}
-        {footer && <div className="mt-5">{footer}</div>}
+        <div className="p-4">{children}</div>
+        {footer && <div className="border-t border-line p-4">{footer}</div>}
       </div>
     </div>
   );
 }
 
-/* --------------------------- Confirm sheet -------------------------- */
+/* --------------------------- Confirm sheet --------------------------- */
 
 export function ConfirmSheet({
   open,
@@ -182,11 +187,11 @@ export function ConfirmSheet({
         </div>
       }
     >
-      <p className="text-sm text-muted">{message}</p>
+      <p className="text-[13px] leading-relaxed text-secondary">{message}</p>
       {children}
       {requireText !== undefined && (
         <input
-          className="mt-3 w-full rounded-xl border border-line bg-raised px-3 py-2 text-sm focus-visible:outline-accent"
+          className="mt-3 w-full rounded-[8px] border border-line bg-raised px-2.5 py-2 text-sm text-fg outline-none focus:border-line-strong"
           placeholder={`Type "${requireText}" to confirm`}
           value={typed}
           onChange={(e) => setTyped(e.target.value)}
@@ -197,7 +202,7 @@ export function ConfirmSheet({
   );
 }
 
-/* ---------------------------- Empty state --------------------------- */
+/* ---------------------------- Empty state ---------------------------- */
 
 export function EmptyState({
   title,
@@ -209,19 +214,19 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-dashed border-line bg-surface/50 px-6 py-10 text-center">
-      <p className="font-medium">{title}</p>
-      {hint && <p className="mt-1 text-sm text-muted">{hint}</p>}
+    <div className="py-10 text-center">
+      <p className="text-sm font-medium text-fg">{title}</p>
+      {hint && <p className="mx-auto mt-1 max-w-xs text-[13px] text-muted">{hint}</p>}
       {action && <div className="mt-4 flex justify-center">{action}</div>}
     </div>
   );
 }
 
 export function Skeleton({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse rounded-xl bg-raised ${className}`} aria-hidden="true" />;
+  return <div className={`animate-pulse rounded-[6px] bg-raised ${className}`} aria-hidden="true" />;
 }
 
-/* ---------------------------- NumberField --------------------------- */
+/* ---------------------------- NumberField ---------------------------- */
 
 export function NumberField({
   value,
@@ -245,11 +250,11 @@ export function NumberField({
   const clamp = (v: number) => Math.min(max, Math.max(min, v));
   const round = (v: number) => Math.round(v * 100) / 100;
   return (
-    <div className={`flex items-center rounded-xl border border-line bg-raised ${className}`}>
+    <div className={`flex h-9 items-center rounded-[8px] border border-line bg-raised ${className}`}>
       <button
         type="button"
         aria-label={`Decrease ${label}`}
-        className="h-11 w-10 shrink-0 rounded-l-xl text-lg text-muted hover:text-fg disabled:opacity-40"
+        className="h-full w-8 shrink-0 rounded-l-[8px] text-secondary transition-colors hover:bg-hover hover:text-fg disabled:opacity-40"
         disabled={value <= min}
         onClick={() => onChange(round(clamp(value - step)))}
       >
@@ -259,7 +264,7 @@ export function NumberField({
         type="number"
         inputMode="decimal"
         aria-label={label}
-        className="tnum h-11 w-full min-w-0 border-x border-line bg-transparent px-1 text-center text-sm outline-none"
+        className="tnum h-full w-full min-w-0 border-x border-line bg-transparent px-1 text-center text-sm text-fg outline-none"
         value={Number.isFinite(value) ? String(value) : ''}
         onChange={(e) => {
           const parsed = parseFloat(e.target.value);
@@ -268,14 +273,14 @@ export function NumberField({
         {...rest}
       />
       {suffix && (
-        <span className="shrink-0 pr-1 text-xs text-muted" aria-hidden="true">
+        <span className="shrink-0 pr-1.5 text-[10px] text-muted" aria-hidden="true">
           {suffix}
         </span>
       )}
       <button
         type="button"
         aria-label={`Increase ${label}`}
-        className="h-11 w-10 shrink-0 rounded-r-xl text-lg text-muted hover:text-fg disabled:opacity-40"
+        className="h-full w-8 shrink-0 rounded-r-[8px] text-secondary transition-colors hover:bg-hover hover:text-fg disabled:opacity-40"
         disabled={value >= max}
         onClick={() => onChange(round(clamp(value + step)))}
       >
@@ -285,7 +290,7 @@ export function NumberField({
   );
 }
 
-/* --------------------------- SegmentedControl ----------------------- */
+/* --------------------------- SegmentedControl ------------------------ */
 
 export function Segmented<T extends string>({
   options,
@@ -299,15 +304,15 @@ export function Segmented<T extends string>({
   ariaLabel: string;
 }) {
   return (
-    <div role="radiogroup" aria-label={ariaLabel} className="flex rounded-xl border border-line bg-raised p-1">
+    <div role="radiogroup" aria-label={ariaLabel} className="flex rounded-[8px] border border-line bg-raised p-0.5">
       {options.map((opt) => (
         <button
           key={opt.value}
           role="radio"
           aria-checked={value === opt.value}
           onClick={() => onChange(opt.value)}
-          className={`min-h-9 flex-1 rounded-lg px-3 text-sm font-medium transition-colors ${
-            value === opt.value ? 'bg-accent text-accent-ink' : 'text-muted hover:text-fg'
+          className={`h-8 flex-1 rounded-[6px] px-3 text-[13px] font-medium transition-colors duration-150 ${
+            value === opt.value ? 'bg-surface text-fg shadow-[0_0_0_1px_var(--app-line-strong)]' : 'text-secondary hover:text-fg'
           }`}
         >
           {opt.label}
@@ -317,7 +322,7 @@ export function Segmented<T extends string>({
   );
 }
 
-/* ------------------------------ Toast ------------------------------- */
+/* ------------------------------ Toast -------------------------------- */
 
 interface ToastState {
   id: string;
@@ -350,12 +355,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toast && (
           <div
             key={toast.id}
-            className={`pointer-events-auto max-w-sm rounded-xl border px-4 py-2.5 text-sm shadow-lg ${
+            className={`pointer-events-auto max-w-sm rounded-[8px] border bg-surface px-3.5 py-2 text-[13px] shadow-[0_8px_24px_rgba(0,0,0,0.4)] ${
               toast.kind === 'error'
-                ? 'border-danger/40 bg-surface text-danger'
-                : toast.kind === 'success'
-                  ? 'border-accent/40 bg-surface text-fg'
-                  : 'border-line bg-surface text-fg'
+                ? 'border-danger/40 text-danger'
+                : 'border-line-strong text-fg'
             }`}
           >
             {toast.message}

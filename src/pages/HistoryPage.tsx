@@ -47,7 +47,7 @@ export function HistoryPage() {
   return (
     <div className="space-y-6">
       <header className="flex items-baseline justify-between">
-        <h1 className="text-lg font-semibold">History</h1>
+        <h1 className="text-[15px] font-semibold tracking-tight">History</h1>
         <p className="text-xs text-muted">{filtered.length} workouts</p>
       </header>
 
@@ -74,13 +74,13 @@ export function HistoryPage() {
               <Link
                 key={s.id}
                 to={`/history/${s.id}`}
-                className="block rounded-2xl border border-line bg-surface p-4 hover:bg-raised/50"
+                className="block rounded-[10px] border border-line bg-surface p-4 hover:bg-raised"
               >
                 <div className="flex items-baseline justify-between gap-2">
                   <p className="min-w-0 truncate text-sm font-medium">
                     {s.name}
                     {gyms.find((g) => g.id === s.gymId) && (
-                      <span className="ml-2 rounded-md bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium text-muted">
+                      <span className="ml-2 rounded-md bg-raised px-1.5 py-0.5 text-[10px] font-medium text-muted">
                         {gyms.find((g) => g.id === s.gymId)!.name}
                       </span>
                     )}

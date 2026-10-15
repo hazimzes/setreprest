@@ -19,12 +19,12 @@ function SetInput({
   suffix: string;
 }) {
   return (
-    <div className="flex h-11 min-w-0 flex-1 items-center rounded-xl border border-line bg-raised">
+    <div className="flex h-9 min-w-0 flex-1 items-center rounded-[8px] border border-line bg-raised focus-within:border-line-strong">
       <input
         type="number"
         inputMode="decimal"
         aria-label={label}
-        className="tnum h-full w-full min-w-0 bg-transparent px-1.5 text-center text-sm outline-none"
+        className="tnum h-full w-full min-w-0 bg-transparent px-1.5 text-center text-[13px] text-fg outline-none"
         value={Number.isFinite(value) ? String(value) : ''}
         onChange={(e) => {
           const parsed = parseFloat(e.target.value);
@@ -54,21 +54,23 @@ export function SetRow({
   onRemove: () => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const typeTone =
-    set.type === 'warmup'
-      ? 'text-muted border-line bg-raised'
-      : set.type === 'drop'
-        ? 'text-fg border-line bg-accent-soft'
-        : 'border-line bg-raised text-fg';
+  const typeMark = set.type === 'warmup' ? 'W' : set.type === 'drop' ? 'D' : '';
 
   return (
     <div className="flex items-center gap-1.5">
-      <span className="tnum w-5 shrink-0 text-right text-xs text-muted" aria-hidden="true">
+      <span className="tnum w-4 shrink-0 text-right text-[11px] text-muted" aria-hidden="true">
         {index + 1}
       </span>
-      <span className={`shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${typeTone}`}>
-        {setTypeLabel(set.type)}
-      </span>
+      {typeMark ? (
+        <span
+          className="w-3 shrink-0 text-center text-[9px] font-semibold text-muted"
+          title={setTypeLabel(set.type)}
+        >
+          {typeMark}
+        </span>
+      ) : (
+        <span className="w-3 shrink-0" aria-hidden="true" />
+      )}
       <SetInput
         label={`Set ${index + 1} weight in ${units}`}
         value={set.weight}
@@ -85,33 +87,33 @@ export function SetRow({
         onClick={onToggle}
         aria-pressed={set.completed}
         aria-label={set.completed ? `Mark set ${index + 1} incomplete` : `Mark set ${index + 1} complete`}
-        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border transition-colors duration-150 ${
           set.completed
             ? 'border-accent bg-accent text-accent-ink'
-            : 'border-line bg-raised text-muted hover:text-fg'
+            : 'border-line bg-raised text-muted hover:border-line-strong hover:text-fg'
         }`}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
       <button
         onClick={() => setMenuOpen(true)}
         aria-label={`Set ${index + 1} options`}
-        className="flex h-11 w-8 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-raised hover:text-fg"
+        className="flex h-9 w-7 shrink-0 items-center justify-center rounded-[6px] text-muted hover:bg-raised hover:text-fg"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <circle cx="12" cy="5" r="1.7" />
-          <circle cx="12" cy="12" r="1.7" />
-          <circle cx="12" cy="19" r="1.7" />
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <circle cx="12" cy="5" r="1.6" />
+          <circle cx="12" cy="12" r="1.6" />
+          <circle cx="12" cy="19" r="1.6" />
         </svg>
       </button>
 
-      <Sheet open={menuOpen} onClose={() => setMenuOpen(false)} title={`Set ${index + 1} options`}>
+      <Sheet open={menuOpen} onClose={() => setMenuOpen(false)} title={`Set ${index + 1}`}>
         <div className="space-y-4">
           <div>
-            <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted">Set type</p>
-            <div className="flex gap-2">
+            <p className="microlabel mb-1.5">Set type</p>
+            <div className="flex gap-1.5">
               {(['warmup', 'working', 'drop'] as const).map((t) => (
                 <Button
                   key={t}
@@ -125,22 +127,20 @@ export function SetRow({
             </div>
           </div>
           <div>
-            <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted">
-              RPE {set.rpe !== undefined ? `— ${set.rpe}` : '— not set'}
-            </p>
-            <div className="flex items-center gap-2">
+            <p className="microlabel mb-1.5">RPE {set.rpe !== undefined ? `· ${set.rpe}` : '· not set'}</p>
+            <div className="flex items-center gap-1.5">
               <Button
-                onClick={() => onUpdate({ rpe: Math.max(1, Math.round(((set.rpe ?? 7) - 0.5) * 2) / 2) })}
                 aria-label="Decrease RPE"
+                onClick={() => onUpdate({ rpe: Math.max(1, Math.round(((set.rpe ?? 7) - 0.5) * 2) / 2) })}
               >
                 −
               </Button>
-              <div className="tnum flex-1 rounded-xl border border-line bg-raised py-2.5 text-center text-sm">
+              <div className="tnum flex-1 rounded-[8px] border border-line bg-raised py-2 text-center text-sm">
                 {set.rpe !== undefined ? set.rpe : '—'}
               </div>
               <Button
-                onClick={() => onUpdate({ rpe: Math.min(10, Math.round(((set.rpe ?? 6.5) + 0.5) * 2) / 2) })}
                 aria-label="Increase RPE"
+                onClick={() => onUpdate({ rpe: Math.min(10, Math.round(((set.rpe ?? 6.5) + 0.5) * 2) / 2) })}
               >
                 +
               </Button>
@@ -150,12 +150,12 @@ export function SetRow({
             </div>
           </div>
           <div>
-            <label htmlFor={`notes-${set.id}`} className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted">
+            <label htmlFor={`notes-${set.id}`} className="microlabel mb-1.5 block">
               Notes
             </label>
             <textarea
               id={`notes-${set.id}`}
-              className="min-h-20 w-full rounded-xl border border-line bg-raised p-3 text-sm outline-none focus-visible:outline-accent"
+              className="min-h-20 w-full rounded-[8px] border border-line bg-raised p-2.5 text-[13px] text-fg outline-none focus:border-line-strong"
               value={set.notes ?? ''}
               onChange={(e) => onUpdate({ notes: e.target.value || undefined })}
               placeholder="Felt strong, paused at bottom…"

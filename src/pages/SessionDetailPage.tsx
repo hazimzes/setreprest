@@ -35,7 +35,7 @@ export function SessionDetailPage() {
               {session.name}
               {gyms.find((g) => g.id === session.gymId) && ' '}
               {gyms.find((g) => g.id === session.gymId) && (
-                <span className="ml-2 rounded-md bg-accent-soft px-1.5 py-0.5 align-middle text-[10px] font-medium text-muted">
+                <span className="ml-2 rounded-md bg-raised px-1.5 py-0.5 align-middle text-[10px] font-medium text-muted">
                   {gyms.find((g) => g.id === session.gymId)!.name}
                 </span>
               )}
@@ -54,12 +54,12 @@ export function SessionDetailPage() {
         const pr = bestSet(slot.sets);
         const e1rm = pr ? estimateOneRepMax(pr.set.weight, pr.set.reps) : null;
         return (
-          <section key={slot.id} className="rounded-2xl border border-line bg-surface p-4">
+          <section key={slot.id} className="rounded-[10px] border border-line bg-surface p-4">
             <div className="flex items-baseline justify-between gap-2">
-              <h2 className="truncate text-sm font-semibold">
+              <h2 className="truncate text-[13px] font-semibold tracking-tight">
                 {nameOf(slot.exerciseId)}
                 {slot.substitutedFromExerciseId && (
-                  <span className="ml-2 rounded-md bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium text-muted">
+                  <span className="ml-2 rounded-md bg-raised px-1.5 py-0.5 text-[10px] font-medium text-muted">
                     subbed
                   </span>
                 )}

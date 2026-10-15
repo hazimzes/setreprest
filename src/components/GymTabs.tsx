@@ -31,9 +31,9 @@ export function GymTabs({
   return (
     <section aria-label="Gym selection" className="space-y-2">
       <div className="flex items-baseline justify-between">
-        <h2 className="text-xs font-medium uppercase tracking-wide text-muted">Where are you training?</h2>
+        <h2 className="microlabel">Where are you training?</h2>
         {gyms.length === 0 && storageAvailable && (
-          <button className="text-xs text-accent underline-offset-2 hover:underline" onClick={() => setAddOpen(true)}>
+          <button className="text-xs text-accent hover:underline" onClick={() => setAddOpen(true)}>
             + Add gym
           </button>
         )}
@@ -46,10 +46,10 @@ export function GymTabs({
               key={item.id || 'all'}
               aria-pressed={active}
               onClick={() => onSelect(item.id)}
-              className={`min-h-16 w-32 shrink-0 rounded-2xl border px-3 py-2.5 text-left transition-colors ${
+              className={`min-h-16 w-32 shrink-0 rounded-[10px] border px-3 py-2.5 text-left transition-colors duration-150 ${
                 active
-                  ? 'border-accent bg-accent-soft'
-                  : 'border-line bg-surface hover:bg-raised/50'
+                  ? 'border-accent bg-raised'
+                  : 'border-line bg-surface hover:bg-raised'
               }`}
             >
               <svg
@@ -61,7 +61,7 @@ export function GymTabs({
                   stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
                 />
               </svg>
-              <span className={`mt-1.5 block truncate text-sm font-medium ${active ? 'text-fg' : 'text-muted'}`}>
+              <span className={`mt-1.5 block truncate text-[13px] font-medium ${active ? 'text-fg' : 'text-secondary'}`}>
                 {item.name}
               </span>
             </button>
@@ -70,7 +70,7 @@ export function GymTabs({
         {gyms.length > 0 && storageAvailable && (
           <button
             aria-label="Add gym"
-            className="flex min-h-16 w-32 shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border border-dashed border-line text-muted hover:text-fg"
+            className="flex min-h-16 w-32 shrink-0 flex-col items-center justify-center gap-1 rounded-[10px] border border-line text-muted hover:text-fg"
             onClick={() => setAddOpen(true)}
           >
             <span className="text-lg leading-none">+</span>
@@ -107,7 +107,7 @@ export function GymTabs({
         </label>
         <input
           id="gym-name"
-          className="w-full rounded-xl border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
+          className="w-full rounded-[8px] border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder="e.g. Celebrity Fitness AEON"

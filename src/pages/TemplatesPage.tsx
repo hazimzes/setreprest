@@ -16,7 +16,7 @@ export function TemplatesPage() {
   return (
     <div className="space-y-4">
       <header className="flex items-baseline justify-between">
-        <h1 className="text-lg font-semibold">Templates</h1>
+        <h1 className="text-[15px] font-semibold tracking-tight">Templates</h1>
         <p className="text-xs text-muted">{templates.length}</p>
       </header>
 
@@ -33,7 +33,7 @@ export function TemplatesPage() {
       ) : (
         <ul className="space-y-2">
           {templates.map((t) => (
-            <li key={t.id} className="rounded-2xl border border-line bg-surface p-4">
+            <li key={t.id} className="rounded-[10px] border border-line bg-surface p-4">
               <div className="flex items-start justify-between gap-2">
                 <Link to={`/templates/${t.id}`} className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{t.name}</p>

@@ -48,10 +48,10 @@ export function HomePage() {
       />
 
       {activeSession ? (
-        <section className="rounded-2xl border border-accent/50 bg-accent-soft p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted">Workout in progress</p>
-          <h2 className="mt-1 truncate text-lg font-semibold">{activeSession.name}</h2>
-          <p className="tnum mt-1 text-sm text-muted">
+        <section className="rounded-[10px] border border-line-strong bg-raised p-5">
+          <p className="microlabel text-accent">Workout in progress</p>
+          <h2 className="mt-1 truncate text-[15px] font-semibold tracking-tight">{activeSession.name}</h2>
+          <p className="tnum mt-1 text-[13px] text-secondary">
             {formatDuration(sessionElapsedMs(activeSession, Date.now()))} ·{' '}
             {countCompletedSets(activeSession)} sets ·{' '}
             {Math.round(sessionVolume(activeSession) * 10) / 10} {settings.units}
@@ -67,7 +67,7 @@ export function HomePage() {
         <section className="space-y-3">
           <Button
             variant="primary"
-            className="h-14 w-full text-base"
+            className="h-12 w-full text-sm"
             onClick={() =>
               void store
                 .startSession({ gymId: selectedGym || undefined })
@@ -84,7 +84,7 @@ export function HomePage() {
                 {templates.slice(0, 8).map((t) => (
                   <button
                     key={t.id}
-                    className="shrink-0 rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm hover:bg-raised disabled:opacity-50"
+                    className="shrink-0 rounded-[8px] border border-line bg-surface px-3.5 py-2.5 text-sm hover:bg-raised disabled:opacity-50"
                     disabled={!store.state.storageAvailable}
                     onClick={() =>
                       void store
@@ -103,20 +103,20 @@ export function HomePage() {
       )}
 
       {!store.state.storageAvailable && (
-        <p className="rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-xs text-danger">
+        <p className="rounded-[8px] border border-danger/30 bg-danger/10 px-4 py-3 text-xs text-danger">
           Storage unavailable — starting workouts is disabled. See Settings for details.
         </p>
       )}
 
       {exercises.length === 0 && (
-        <p className="rounded-xl border border-line bg-surface px-4 py-3 text-xs text-muted">
+        <p className="rounded-[8px] border border-line bg-surface px-4 py-3 text-xs text-muted">
           Exercise library is empty. Pull-to-refresh won't fix it — restore a backup in Settings or create custom exercises in the Library.
         </p>
       )}
 
       <section className="space-y-2">
         <div className="flex items-baseline justify-between">
-          <h3 className="text-sm font-semibold">Last workout</h3>
+          <h3 className="text-[13px] font-semibold tracking-tight">Last workout</h3>
           <Link to="/history" className="text-xs text-muted underline-offset-2 hover:underline">
             All history
           </Link>
@@ -124,12 +124,12 @@ export function HomePage() {
         {last ? (
           <Link
             to={`/history/${last.id}`}
-            className="block rounded-2xl border border-line bg-surface p-4 hover:bg-raised/50"
+            className="block rounded-[10px] border border-line bg-surface p-4 hover:bg-raised"
           >
             <p className="text-sm font-medium">
               {last.name}
               {gymName(last.gymId) && (
-                <span className="ml-2 rounded-md bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium text-muted">
+                <span className="ml-2 rounded-md bg-raised px-1.5 py-0.5 text-[10px] font-medium text-muted">
                   {gymName(last.gymId)}
                 </span>
               )}
@@ -152,7 +152,7 @@ export function HomePage() {
 
       {recent.length > 0 && (
         <section className="space-y-2">
-          <h3 className="text-sm font-semibold">
+          <h3 className="text-[13px] font-semibold tracking-tight">
             Last 4 weeks{selectedGym ? ` — ${gymName(selectedGym)}` : ''}
           </h3>
           <div className="flex items-end gap-1.5" aria-label={`${recent.length} workouts in the last 4 weeks`}>

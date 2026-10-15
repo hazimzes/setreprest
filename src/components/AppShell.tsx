@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
             An unexpected error occurred. Your saved data is safe — reload to continue.
           </p>
           <button
-            className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-accent-ink"
+            className="rounded-[8px] bg-accent px-4 py-2 text-sm font-semibold text-accent-ink"
             onClick={() => location.reload()}
           >
             Reload
@@ -58,24 +58,34 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main className="mx-auto w-full max-w-xl flex-1 px-4 pb-24 pt-5 sm:pb-10 md:pt-16">{children}</main>
         <nav
           aria-label="Main navigation"
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 backdrop-blur md:inset-x-auto md:bottom-auto md:left-1/2 md:right-auto md:top-0 md:w-full md:max-w-xl md:-translate-x-1/2 md:border-b md:border-t-0 md:bg-bg/95 md:px-4"
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface md:inset-x-auto md:bottom-auto md:left-1/2 md:right-auto md:top-0 md:w-full md:max-w-xl md:-translate-x-1/2 md:border-x-0 md:border-t-0 md:bg-bg md:px-4"
         >
-          <div className="mx-auto flex max-w-xl items-stretch justify-around md:justify-end md:gap-1 md:py-2">
+          <div className="mx-auto flex max-w-xl items-stretch justify-around md:justify-end md:gap-0.5 md:py-1.5">
             {TABS.map((tab) => (
               <NavLink
                 key={tab.to}
                 to={tab.to}
                 end={tab.to === '/'}
                 className={({ isActive }) =>
-                  `flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 px-2 text-[11px] font-medium md:min-h-9 md:flex-none md:flex-row md:gap-1.5 md:rounded-xl md:px-3 md:text-sm ${
-                    isActive ? 'text-fg md:bg-raised' : 'text-muted hover:text-fg'
+                  `relative flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 px-2 text-[10px] font-medium md:min-h-8 md:flex-none md:flex-row md:gap-1.5 md:rounded-[6px] md:px-2.5 md:text-[13px] ${
+                    isActive ? 'text-fg' : 'text-muted hover:text-secondary'
                   }`
                 }
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="md:hidden">
-                  <path d={tab.icon} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                {tab.label}
+                {({ isActive }) => (
+                  <>
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="md:hidden">
+                      <path d={tab.icon} stroke="currentColor" strokeWidth={isActive ? 2.1 : 1.7} strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {tab.label}
+                    <span
+                      aria-hidden="true"
+                      className={`absolute inset-x-5 top-0 h-0.5 rounded-full bg-accent transition-opacity duration-150 md:hidden ${
+                        isActive ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  </>
+                )}
               </NavLink>
             ))}
           </div>

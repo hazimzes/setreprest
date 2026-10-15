@@ -101,7 +101,7 @@ export function ExerciseDetailPage() {
         </Link>
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-lg font-semibold">{exercise.name}</h1>
+            <h1 className="text-[15px] font-semibold tracking-tight">{exercise.name}</h1>
             <p className="text-xs text-muted">
               {exercise.equipment} · {exercise.muscleGroups.join(', ')}
             </p>
@@ -134,7 +134,7 @@ export function ExerciseDetailPage() {
       )}
 
       {allTime && (
-        <section className="rounded-2xl border border-accent/40 bg-accent-soft p-4">
+        <section className="rounded-[10px] border border-line-strong bg-raised p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-muted">
             Personal record{gymFilter ? ` — ${gyms.find((g) => g.id === gymFilter)?.name ?? ''}` : ''}
           </p>
@@ -149,11 +149,11 @@ export function ExerciseDetailPage() {
       )}
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold">
+        <h2 className="text-[13px] font-semibold tracking-tight">
           Estimated 1RM progression{gymFilter ? ` — ${gyms.find((g) => g.id === gymFilter)?.name ?? ''}` : ''}
         </h2>
         {e1rmData.filter((d) => d.e1rm !== null).length >= 2 ? (
-          <div className="rounded-2xl border border-line bg-surface p-3">
+          <div className="rounded-[10px] border border-line bg-surface p-3">
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={e1rmData} margin={{ top: 8, right: 8, bottom: 0, left: -18 }}>
                 <CartesianGrid stroke={GRID} vertical={false} />
@@ -189,18 +189,18 @@ export function ExerciseDetailPage() {
             </ResponsiveContainer>
           </div>
         ) : (
-          <p className="rounded-xl border border-dashed border-line px-4 py-3 text-xs text-muted">
+          <p className="rounded-[8px] border border-line px-4 py-3 text-xs text-muted">
             Not enough data yet — at least two sessions with working sets of 1–12 reps are needed.
           </p>
         )}
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold">
+        <h2 className="text-[13px] font-semibold tracking-tight">
           Volume per session{gymFilter ? ` — ${gyms.find((g) => g.id === gymFilter)?.name ?? ''}` : ''}
         </h2>
         {volumeData.length >= 2 ? (
-          <div className="rounded-2xl border border-line bg-surface p-3">
+          <div className="rounded-[10px] border border-line bg-surface p-3">
             <ResponsiveContainer width="100%" height={160}>
               <BarChart data={volumeData} margin={{ top: 8, right: 8, bottom: 0, left: -18 }}>
                 <CartesianGrid stroke={GRID} vertical={false} />
@@ -228,16 +228,16 @@ export function ExerciseDetailPage() {
             </ResponsiveContainer>
           </div>
         ) : (
-          <p className="rounded-xl border border-dashed border-line px-4 py-3 text-xs text-muted">
+          <p className="rounded-[8px] border border-line px-4 py-3 text-xs text-muted">
             Log this exercise in two or more sessions to see volume trends.
           </p>
         )}
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold">History</h2>
+        <h2 className="text-[13px] font-semibold tracking-tight">History</h2>
         {relevantSessions.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-line px-4 py-3 text-xs text-muted">
+          <p className="rounded-[8px] border border-line px-4 py-3 text-xs text-muted">
             No logged sessions yet.
           </p>
         ) : (
@@ -253,7 +253,7 @@ export function ExerciseDetailPage() {
                 <li key={s.id}>
                   <Link
                     to={`/history/${s.id}`}
-                    className="flex items-baseline justify-between rounded-xl border border-line bg-surface px-4 py-3 hover:bg-raised/50"
+                    className="flex items-baseline justify-between rounded-[8px] border border-line bg-surface px-4 py-3 hover:bg-raised"
                   >
                     <span className="text-sm">{formatDate(s.startedAt)}</span>
                     <span className="tnum text-xs text-muted">

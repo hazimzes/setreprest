@@ -72,17 +72,17 @@ export function WorkoutPage() {
 
   return (
     <div className="space-y-3">
-      <header className="sticky top-0 z-30 -mx-4 bg-bg/95 px-4 pb-2 pt-1 backdrop-blur">
+      <header className="sticky top-0 z-30 -mx-4 border-b border-line bg-bg/95 px-4 pb-2 pt-2 md:top-[45px]">
         <div className="flex items-center gap-2">
           <button
-            className="min-w-0 flex-1 truncate text-left text-lg font-semibold"
+            className="min-w-0 flex-1 truncate text-left text-[15px] font-semibold tracking-tight"
             onClick={() => { setDraftName(activeSession.name); setRenameOpen(true); }}
             aria-label={`Rename workout. Current name: ${activeSession.name}`}
           >
             {activeSession.name}
           </button>
-          <span className="tnum rounded-lg bg-raised px-2.5 py-1 text-sm" aria-label={`Elapsed ${formatDuration(elapsed)}`}>
-            {activeSession.paused && <span className="mr-1 text-xs text-muted">(paused)</span>}
+          <span className="tnum rounded-[6px] border border-line bg-raised px-2 py-1 text-[13px]" aria-label={`Elapsed ${formatDuration(elapsed)}`}>
+            {activeSession.paused && <span className="mr-1 text-[10px] uppercase tracking-wide text-muted">Paused</span>}
             {formatDuration(elapsed)}
           </span>
           {activeSession.paused ? (
@@ -91,9 +91,9 @@ export function WorkoutPage() {
             <Button onClick={() => store.pauseSession()}>Pause</Button>
           )}
         </div>
-        <p className="mt-1 text-xs text-muted">
+        <p className="tnum mt-1 pb-1 text-[11px] text-muted">
           {gyms.find((g) => g.id === activeSession.gymId) && (
-            <span className="mr-2 rounded-md bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium">
+            <span className="mr-2 rounded-md bg-raised px-1.5 py-0.5 text-[10px] font-medium">
               {gyms.find((g) => g.id === activeSession.gymId)!.name}
             </span>
           )}
@@ -128,7 +128,7 @@ export function WorkoutPage() {
       )}
 
       {activeSession.exercises.length > 0 && (
-        <Button variant="outline" className="w-full border-dashed" onClick={() => setAddOpen(true)}>
+        <Button variant="outline" className="w-full" onClick={() => setAddOpen(true)}>
           <PlusIcon />
           Add exercise
         </Button>
@@ -178,7 +178,7 @@ export function WorkoutPage() {
       >
         <input
           aria-label="Workout name"
-          className="w-full rounded-xl border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
+          className="w-full rounded-[8px] border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
           value={draftName}
           onChange={(e) => setDraftName(e.target.value)}
         />

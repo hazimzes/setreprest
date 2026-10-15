@@ -69,7 +69,7 @@ export function TemplateEditorPage() {
         <Link to="/templates" className="text-xs text-muted hover:underline">
           ← Templates
         </Link>
-        <h1 className="text-lg font-semibold">{isNew ? 'New template' : 'Edit template'}</h1>
+        <h1 className="text-[15px] font-semibold tracking-tight">{isNew ? 'New template' : 'Edit template'}</h1>
       </header>
 
       <div>
@@ -78,7 +78,7 @@ export function TemplateEditorPage() {
         </label>
         <input
           id="tpl-name"
-          className="w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
+          className="h-9 w-full rounded-[8px] border border-line bg-surface px-3 text-[13px] outline-none focus:border-line-strong"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Push day A"
@@ -90,7 +90,7 @@ export function TemplateEditorPage() {
       ) : (
         <ul className="space-y-2">
           {items.map((item, i) => (
-            <li key={`${item.exerciseId}-${i}`} className="rounded-2xl border border-line bg-surface p-3">
+            <li key={`${item.exerciseId}-${i}`} className="rounded-[10px] border border-line bg-surface p-3">
               <div className="flex items-center gap-2">
                 <p className="min-w-0 flex-1 truncate text-sm font-medium">{nameOf(item.exerciseId)}</p>
                 <button
@@ -152,7 +152,7 @@ export function TemplateEditorPage() {
         </ul>
       )}
 
-      <Button variant="outline" className="w-full border-dashed" onClick={() => setAddOpen(true)}>
+      <Button variant="outline" className="w-full" onClick={() => setAddOpen(true)}>
         <PlusIcon />
         Add exercise
       </Button>

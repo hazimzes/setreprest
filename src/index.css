@@ -2,33 +2,51 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Design tokens — "graphite" system.
+ *
+ * Principles (Linear / Geist school):
+ *   Elevation is a ladder of slightly lighter near-black surfaces, never shadows.
+ *   Borders are solid grays, one border per edge, hairline (1px).
+ *   Radii are small: 6px controls, 8px inputs/buttons, 10px panels.
+ *   One accent, spent sparingly: primary CTA, completed checks, active indicators.
+ *   Hierarchy comes from typography: micro-labels (uppercase, wide tracking),
+ *   tabular numerals for all data, weight contrast instead of color contrast.
+ */
+
 :root {
-  --app-bg: #f5f6f8;
+  --app-bg: #f7f7f8;
   --app-surface: #ffffff;
-  --app-raised: #eef0f3;
-  --app-fg: #171a1f;
-  --app-muted: #5f6873;
-  --app-line: rgba(23, 26, 31, 0.12);
+  --app-raised: #f0f0f2;
+  --app-hover: #e8e8ec;
+  --app-fg: #17181a;
+  --app-secondary: #52555c;
+  --app-muted: #83878f;
+  --app-line: #e4e4e8;
+  --app-line-strong: #d2d3d9;
   --app-accent: #3f7d20;
-  --app-accent-soft: rgba(63, 125, 32, 0.14);
   --app-accent-ink: #ffffff;
-  --app-danger: #b3261e;
-  /* Chart series color — validated for the light surface (dataviz band L 0.43–0.77). */
+  --app-accent-dim: #e4efdc;
+  --app-danger: #c4321f;
+  /* Chart series — validated for the light surface (dataviz band L 0.43–0.77). */
   --app-chart: #3f7d20;
 }
 
 .dark {
-  --app-bg: #0d0f12;
-  --app-surface: #14171c;
-  --app-raised: #1c2027;
-  --app-fg: #e8eaed;
-  --app-muted: #98a1ac;
-  --app-line: rgba(255, 255, 255, 0.09);
+  --app-bg: #0a0b0d;
+  --app-surface: #101214;
+  --app-raised: #17191d;
+  --app-hover: #1e2126;
+  --app-fg: #f2f3f5;
+  --app-secondary: #9ba1ab;
+  --app-muted: #676d78;
+  --app-line: #232529;
+  --app-line-strong: #32353b;
   --app-accent: #c8f169;
-  --app-accent-soft: rgba(200, 241, 105, 0.14);
-  --app-accent-ink: #1a2405;
-  --app-danger: #ff6b61;
-  /* Chart series color — validated for the dark surface (dataviz band L 0.48–0.67). */
+  --app-accent-ink: #161d04;
+  --app-accent-dim: #1c2410;
+  --app-danger: #f07168;
+  /* Chart series — validated for the dark surface (dataviz band L 0.48–0.67). */
   --app-chart: #699f2f;
 }
 
@@ -36,14 +54,20 @@
   --color-bg: var(--app-bg);
   --color-surface: var(--app-surface);
   --color-raised: var(--app-raised);
+  --color-hover: var(--app-hover);
   --color-fg: var(--app-fg);
+  --color-secondary: var(--app-secondary);
   --color-muted: var(--app-muted);
   --color-line: var(--app-line);
+  --color-line-strong: var(--app-line-strong);
   --color-accent: var(--app-accent);
-  --color-accent-soft: var(--app-accent-soft);
   --color-accent-ink: var(--app-accent-ink);
+  --color-accent-dim: var(--app-accent-dim);
   --color-danger: var(--app-danger);
   --color-chart: var(--app-chart);
+  --radius-control: 6px;
+  --radius-input: 8px;
+  --radius-panel: 10px;
 }
 
 html,
@@ -56,7 +80,19 @@ body {
   background: var(--app-bg);
   color: var(--app-fg);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Uppercase micro-label: the system's metadata voice */
+.microlabel {
+  font-size: 10px;
+  font-weight: 550;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--app-muted);
 }
 
 /* Numerals line up in weight/reps inputs and stats */
@@ -72,6 +108,21 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+/* Horizontal chip/pill rows: scrollbar hidden, scroll still works via touch,
+   trackpad, and shift+wheel. Keeps the bar from crowding the pills. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+::selection {
+  background: var(--app-accent);
+  color: var(--app-accent-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {

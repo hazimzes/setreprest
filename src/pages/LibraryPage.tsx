@@ -28,7 +28,7 @@ export function LibraryPage() {
   return (
     <div className="space-y-4">
       <header className="flex items-baseline justify-between">
-        <h1 className="text-lg font-semibold">Library</h1>
+        <h1 className="text-[15px] font-semibold tracking-tight">Library</h1>
         <p className="text-xs text-muted">{exercises.length} exercises</p>
       </header>
 
@@ -36,7 +36,7 @@ export function LibraryPage() {
         type="search"
         aria-label="Search exercises"
         placeholder="Search exercises…"
-        className="w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm outline-none focus-visible:outline-accent"
+        className="h-9 w-full rounded-[8px] border border-line bg-surface px-3 text-[13px] outline-none focus:border-line-strong"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
@@ -72,12 +72,12 @@ export function LibraryPage() {
           action={storageAvailable ? <Button variant="primary" onClick={() => setCreateOpen(true)}>New exercise</Button> : undefined}
         />
       ) : (
-        <ul className="space-y-1">
+        <ul className="divide-y divide-line rounded-[10px] border border-line bg-surface">
           {results.map((ex) => (
-            <li key={ex.id} className="flex items-center gap-1 rounded-xl border border-line bg-surface">
-              <Link to={`/library/${ex.id}`} className="min-w-0 flex-1 px-4 py-3">
-                <span className="block truncate text-sm font-medium">{ex.name}</span>
-                <span className="text-xs text-muted">
+            <li key={ex.id} className="flex items-center gap-1 transition-colors duration-150 hover:bg-raised">
+              <Link to={`/library/${ex.id}`} className="min-w-0 flex-1 px-3.5 py-2.5">
+                <span className="block truncate text-[13px] font-medium">{ex.name}</span>
+                <span className="text-[11px] text-muted">
                   {ex.equipment} · {ex.muscleGroups.join(', ')}
                 </span>
               </Link>
@@ -159,7 +159,7 @@ function CreateExerciseSheet({
           </label>
           <input
             id="ex-name"
-            className="w-full rounded-xl border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
+            className="w-full rounded-[8px] border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Landmine Press"

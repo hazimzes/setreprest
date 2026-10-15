@@ -50,12 +50,12 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-lg font-semibold">Settings</h1>
+        <h1 className="text-[15px] font-semibold tracking-tight">Settings</h1>
       </header>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold">Preferences</h2>
-        <div className="rounded-2xl border border-line bg-surface p-4">
+        <h2 className="text-[13px] font-semibold tracking-tight">Preferences</h2>
+        <div className="rounded-[10px] border border-line bg-surface p-4">
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted">Units</p>
           <Segmented
             ariaLabel="Weight units"
@@ -112,8 +112,8 @@ export function SettingsPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold">Gyms</h2>
-        <div className="space-y-2 rounded-2xl border border-line bg-surface p-4">
+        <h2 className="text-[13px] font-semibold tracking-tight">Gyms</h2>
+        <div className="space-y-2 rounded-[10px] border border-line bg-surface p-4">
           <p className="text-xs text-muted">
             Tag workouts to a gym and keep per-gym history and personal records. Weights are never shared between gyms — equipment differs.
           </p>
@@ -124,7 +124,7 @@ export function SettingsPage() {
               {gyms.map((g) => {
                 const usedBy = sessions.filter((s) => s.gymId === g.id).length;
                 return (
-                  <li key={g.id} className="flex items-center gap-2 rounded-xl border border-line bg-raised px-3 py-2">
+                  <li key={g.id} className="flex items-center gap-2 rounded-[8px] border border-line bg-raised px-3 py-2">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{g.name}</p>
                       <p className="text-[11px] text-muted">
@@ -149,8 +149,8 @@ export function SettingsPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold">Your data</h2>
-        <div className="space-y-2 rounded-2xl border border-line bg-surface p-4">
+        <h2 className="text-[13px] font-semibold tracking-tight">Your data</h2>
+        <div className="space-y-2 rounded-[10px] border border-line bg-surface p-4">
           <p className="text-xs text-muted">
             {sessions.length} workouts · {exercises.length} exercises stored on this device.
           </p>
@@ -203,8 +203,8 @@ export function SettingsPage() {
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold">Where is my data?</h2>
-        <div className="space-y-2 rounded-2xl border border-line bg-surface p-4 text-xs leading-relaxed text-muted">
+        <h2 className="text-[13px] font-semibold tracking-tight">Where is my data?</h2>
+        <div className="space-y-2 rounded-[10px] border border-line bg-surface p-4 text-xs leading-relaxed text-muted">
           <p>
             SetRepRest stores everything locally in your browser (IndexedDB). Nothing is uploaded —
             there is no account and no server.
@@ -271,7 +271,7 @@ export function SettingsPage() {
       >
         <input
           aria-label="Gym name"
-          className="w-full rounded-xl border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
+          className="w-full rounded-[8px] border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
           value={gymEdit?.name ?? ''}
           onChange={(e) => setGymEdit((prev) => (prev ? { ...prev, name: e.target.value } : prev))}
         />
@@ -340,7 +340,7 @@ function AddGymRow({ onCreate }: { onCreate: (name: string) => Promise<void> }) 
     <div className="flex gap-2 pt-1">
       <input
         aria-label="New gym name"
-        className="min-w-0 flex-1 rounded-xl border border-line bg-raised px-3 py-2 text-sm outline-none focus-visible:outline-accent"
+        className="min-w-0 flex-1 rounded-[8px] border border-line bg-raised px-3 py-2 text-sm outline-none focus-visible:outline-accent"
         placeholder="New gym name…"
         value={draft}
         onChange={(e) => setDraft(e.target.value)}

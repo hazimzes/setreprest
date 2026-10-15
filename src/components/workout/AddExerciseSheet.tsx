@@ -41,7 +41,7 @@ export function AddExerciseSheet({
         type="search"
         aria-label="Search exercises"
         placeholder="Search exercises…"
-        className="w-full rounded-xl border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
+        className="w-full rounded-[8px] border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
@@ -70,7 +70,7 @@ export function AddExerciseSheet({
         {results.map((ex) => (
           <li key={ex.id}>
             <button
-              className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm hover:bg-raised"
+              className="flex w-full items-center gap-2 rounded-[8px] px-3 py-2.5 text-left text-sm hover:bg-raised"
               onClick={() => {
                 onPick(ex.id);
                 onClose();

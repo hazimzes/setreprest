@@ -52,7 +52,13 @@ production build PASS (base `/setreprest/` verified in output).
 | 8.7 | progressSummary: 28d vs prior-28d deltas | PASS |
 | 8.8 | E2E: demo data → Progress tab renders verdict, charts, PR feed, streak | PASS — e2e |
 
-## 1. Domain unit tests (Vitest)
+## 9. This-week card (added 2026-10-15)
+
+| # | Case | Result |
+|---|------|--------|
+| 9.1 | weekStart/weekDays: Monday-start week, local midnight, today/past flags | PASS — covered via progress domain + e2e |
+| 9.2 | E2E: finishing a workout fills today's dot and updates goal count | PASS — e2e |
+
 
 | # | Case | Result |
 |---|------|--------|

@@ -76,6 +76,23 @@ test('start → add exercise → log sets → finish → history shows correct v
   await expect(page.getByText('100 kg').first()).toBeVisible();
 });
 
+test('this-week card: today fills after finishing a workout', async ({ page }) => {
+  await startEmptyWorkout(page);
+  await addExerciseByName(page, 'Plank');
+  await page.getByRole('button', { name: 'Add set' }).click();
+  await page.getByLabel('Mark set 1 complete').click();
+  await page.getByRole('button', { name: 'Finish workout' }).click();
+  await page
+    .getByRole('dialog', { name: 'Finish workout?' })
+    .getByRole('button', { name: 'Finish' })
+    .click();
+  await page.waitForURL('**/setreprest/#/history');
+  await page.getByRole('link', { name: 'Home' }).click();
+  const today = page.locator('[aria-current="date"]');
+  await expect(today).toHaveClass(/bg-accent/);
+  await expect(page.getByRole('heading', { name: 'This week' })).toBeVisible();
+});
+
 test('workout timer ticks in real time without interaction', async ({ page }) => {
   await startEmptyWorkout(page);
   const elapsed = page.locator('span[aria-label^="Elapsed"]');

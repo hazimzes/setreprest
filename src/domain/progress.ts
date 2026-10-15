@@ -9,6 +9,41 @@ import type { Exercise, MuscleGroup, Session } from './models';
 
 const DAY = 24 * 3600 * 1000;
 
+/** Monday-start week containing `now`, at local midnight. */
+export function weekStart(now: number): number {
+  const d = new Date(now);
+  const offset = (d.getDay() + 6) % 7; // Monday = 0
+  d.setHours(0, 0, 0, 0);
+  return d.getTime() - offset * DAY;
+}
+
+export interface WeekDay {
+  date: number;
+  dayOfMonth: number;
+  letter: string;
+  isToday: boolean;
+  isPast: boolean;
+}
+
+/** The 7 days (Mon..Sun) of the week containing `now`. */
+export function weekDays(now: number): WeekDay[] {
+  const start = weekStart(now);
+  const letters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
+  return Array.from({ length: 7 }, (_, i) => {
+    const date = start + i * DAY;
+    const d = new Date(date);
+    return {
+      date,
+      dayOfMonth: d.getDate(),
+      letter: letters[i]!,
+      isToday: date === today.getTime(),
+      isPast: date < today.getTime(),
+    };
+  });
+}
+
 export interface WeekBucket {
   /** Epoch ms of the week's Monday-style label anchor (start of window). */
   start: number;

@@ -9,6 +9,7 @@ import {
 } from '../domain/calculations';
 import { Button, ConfirmSheet, EmptyState, Skeleton } from '../components/ui';
 import { GymTabs } from '../components/GymTabs';
+import { ThisWeekCard } from '../components/ThisWeekCard';
 import { useState } from 'react';
 
 export function HomePage() {
@@ -39,6 +40,8 @@ export function HomePage() {
 
   return (
     <div className="space-y-5">
+      <ThisWeekCard sessions={visibleSessions} units={settings.units} />
+
       <GymTabs
         gyms={gyms}
         selected={selectedGym}

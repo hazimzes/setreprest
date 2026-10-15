@@ -1,4 +1,4 @@
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
@@ -449,14 +449,21 @@ describe('SetRow component', () => {
     expect(screen.getByLabelText('Mark set 1 incomplete')).toBeInTheDocument();
   });
 
-  it('steps weight by unit-appropriate increments', async () => {
+  it('accepts typed weight values and reports them to the store', async () => {
     await freshEnv();
     const { SetRow } = await import('../components/workout/SetRow');
     const set = { id: 's', type: 'working' as const, weight: 100, reps: 5, completed: false };
     const onUpdate = vi.fn();
-    const user = userEvent.setup();
     render(<SetRow index={0} set={set} units="kg" onUpdate={onUpdate} onToggle={vi.fn()} onRemove={vi.fn()} />);
-    await user.click(screen.getByLabelText('Increase Set 1 weight in kg'));
+    const weight = screen.getByLabelText('Set 1 weight in kg');
+    act(() => {
+      fireEvent.change(weight, { target: { value: '102.5' } });
+    });
     expect(onUpdate).toHaveBeenCalledWith({ weight: 102.5 });
+    // Unparseable input falls back to 0 rather than NaN poisoning the set
+    act(() => {
+      fireEvent.change(weight, { target: { value: 'abc' } });
+    });
+    expect(onUpdate).toHaveBeenLastCalledWith({ weight: 0 });
   });
 });

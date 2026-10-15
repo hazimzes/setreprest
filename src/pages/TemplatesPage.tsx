@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../state/appStore';
-import { Button, ConfirmSheet, EmptyState } from '../components/ui';
+import { Button, ConfirmSheet, EmptyState, PlusIcon } from '../components/ui';
 import { useToast } from '../components/ui';
 
 export function TemplatesPage() {
@@ -66,7 +66,8 @@ export function TemplatesPage() {
 
       {storageAvailable && (
         <Button variant="primary" className="w-full" onClick={() => navigate('/templates/new')}>
-          + New template
+          <PlusIcon />
+          New template
         </Button>
       )}
 

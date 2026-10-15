@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAppStore } from '../state/appStore';
 import type { TemplateExercise } from '../domain/models';
-import { Button, EmptyState, NumberField, useToast } from '../components/ui';
+import { Button, EmptyState, NumberField, PlusIcon, useToast } from '../components/ui';
 import { AddExerciseSheet } from '../components/workout/AddExerciseSheet';
 
 export function TemplateEditorPage() {
@@ -153,7 +153,8 @@ export function TemplateEditorPage() {
       )}
 
       <Button variant="outline" className="w-full border-dashed" onClick={() => setAddOpen(true)}>
-        + Add exercise
+        <PlusIcon />
+        Add exercise
       </Button>
 
       <Button variant="primary" className="w-full" disabled={!valid} onClick={() => void save()}>

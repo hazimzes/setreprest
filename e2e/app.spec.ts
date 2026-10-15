@@ -52,7 +52,7 @@ test('start → add exercise → log sets → finish → history shows correct v
   await expect(page.getByRole('heading', { name: 'Barbell Squat' })).toBeVisible();
 
   // Add a set and fill it
-  await page.getByRole('button', { name: '+ Add set' }).click();
+  await page.getByRole('button', { name: 'Add set' }).click();
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('100');
   await page.getByLabel('Set 1 reps', { exact: true }).fill('5');
   await page.getByLabel('Mark set 1 complete').click();
@@ -79,7 +79,7 @@ test('start → add exercise → log sets → finish → history shows correct v
 test('refresh mid-workout recovers the session with sets intact', async ({ page }) => {
   await startEmptyWorkout(page);
   await addExerciseByName(page, 'Overhead Press');
-  await page.getByRole('button', { name: '+ Add set' }).click();
+  await page.getByRole('button', { name: 'Add set' }).click();
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('42.5');
   await page.getByLabel('Set 1 reps', { exact: true }).fill('8');
 
@@ -105,9 +105,9 @@ test('template start copies targets; template stays unchanged', async ({ page })
 
   // Build a template
   await page.getByRole('link', { name: 'Templates' }).click();
-  await page.getByRole('button', { name: '+ New template' }).click();
+  await page.getByRole('button', { name: 'New template' }).click();
   await page.getByLabel('Name').fill('Push A');
-  await page.getByRole('button', { name: '+ Add exercise' }).click();
+  await page.getByRole('button', { name: 'Add exercise' }).click();
   await page.getByLabel('Search exercises').fill('Bench');
   await page.getByRole('button', { name: 'Barbell Bench Press' }).click();
   await page.getByLabel('Increase Target sets for Barbell Bench Press').click();
@@ -129,7 +129,7 @@ test('template start copies targets; template stays unchanged', async ({ page })
 test('substitution keeps the original sets attributed to the original exercise', async ({ page }) => {
   await startEmptyWorkout(page);
   await addExerciseByName(page, 'Barbell Squat');
-  await page.getByRole('button', { name: '+ Add set' }).click();
+  await page.getByRole('button', { name: 'Add set' }).click();
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('120');
   await page.getByLabel('Mark set 1 complete').click();
 
@@ -149,7 +149,7 @@ test('backup export → reset → restore round-trips data', async ({ page }) =>
   // Seed one completed workout first
   await startEmptyWorkout(page);
   await addExerciseByName(page, 'Deadlift');
-  await page.getByRole('button', { name: '+ Add set' }).click();
+  await page.getByRole('button', { name: 'Add set' }).click();
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('150');
   await page.getByLabel('Set 1 reps', { exact: true }).fill('3');
   await page.getByLabel('Mark set 1 complete').click();
@@ -190,7 +190,7 @@ test('backup export → reset → restore round-trips data', async ({ page }) =>
 test('CSV export contains header and set rows', async ({ page }) => {
   await startEmptyWorkout(page);
   await addExerciseByName(page, 'Barbell Row');
-  await page.getByRole('button', { name: '+ Add set' }).click();
+  await page.getByRole('button', { name: 'Add set' }).click();
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('70');
   await page.getByLabel('Set 1 reps', { exact: true }).fill('10');
   await page.getByLabel('Mark set 1 complete').click();
@@ -233,7 +233,7 @@ test('offline: after first load the app boots and logs a set without network', a
     await page.getByRole('button', { name: 'Add exercise', exact: false }).first().click();
     await page.getByLabel('Search exercises').fill('Pull-Up');
     await page.getByRole('button', { name: 'Pull-Up' }).first().click();
-    await page.getByRole('button', { name: '+ Add set' }).click();
+    await page.getByRole('button', { name: 'Add set' }).click();
     await expect(page.getByLabel('Set 1 weight in kg', { exact: true })).toBeVisible();
   } finally {
     await context.setOffline(false);
@@ -253,7 +253,7 @@ test('custom exercise create → visible in library → usable in workout', asyn
   await page.goto(APP);
   await dismissSWOfferIfAny(page);
   await page.getByRole('link', { name: 'Library' }).click();
-  await page.getByRole('button', { name: '+ New custom exercise' }).click();
+  await page.getByRole('button', { name: 'New custom exercise' }).click();
   const dialog = page.getByRole('dialog', { name: 'New custom exercise' });
   await page.getByLabel('Name', { exact: true }).fill('Landmine Press');
   await dialog.getByRole('button', { name: 'barbell', exact: true }).click();
@@ -298,7 +298,7 @@ test('gym tabs: create gym → tagged workout → per-gym history and PR filteri
   await page.getByRole('button', { name: 'Add exercise', exact: false }).first().click();
   await page.getByLabel('Search exercises').fill('Deadlift');
   await page.getByRole('button', { name: 'Deadlift' }).first().click();
-  await page.getByRole('button', { name: '+ Add set' }).click();
+  await page.getByRole('button', { name: 'Add set' }).click();
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('180');
   await page.getByLabel('Set 1 reps', { exact: true }).fill('3');
   await page.getByLabel('Mark set 1 complete').click();

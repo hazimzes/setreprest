@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../state/appStore';
 import { countCompletedSets, formatDuration, sessionElapsedMs, sessionVolume } from '../domain/calculations';
-import { Button, ConfirmSheet, EmptyState, Sheet } from '../components/ui';
+import { Button, ConfirmSheet, EmptyState, PlusIcon, Sheet } from '../components/ui';
 import { ExerciseCard } from '../components/workout/ExerciseCard';
 import { AddExerciseSheet } from '../components/workout/AddExerciseSheet';
 import { RestTimer } from '../components/workout/RestTimer';
@@ -130,7 +130,8 @@ export function WorkoutPage() {
 
       {activeSession.exercises.length > 0 && (
         <Button variant="outline" className="w-full border-dashed" onClick={() => setAddOpen(true)}>
-          + Add exercise
+          <PlusIcon />
+          Add exercise
         </Button>
       )}
 

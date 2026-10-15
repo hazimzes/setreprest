@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Exercise, SessionExercise, Units } from '../../domain/models';
 import { bestSet, estimateOneRepMax, formatWeight, setVolume } from '../../domain/calculations';
-import { Button } from '../ui';
+import { Button, PlusIcon } from '../ui';
 import { SetRow } from './SetRow';
 
 export function ExerciseCard({
@@ -92,7 +92,8 @@ export function ExerciseCard({
             />
           ))}
           <Button variant="outline" className="mt-1 w-full border-dashed" onClick={onAddSet}>
-            + Add set
+            <PlusIcon />
+            Add set
           </Button>
         </div>
       )}

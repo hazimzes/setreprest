@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppStore } from '../state/appStore';
 import { EQUIPMENT_TYPES, MUSCLE_GROUPS, type Equipment, type MuscleGroup } from '../domain/models';
-import { Button, Chip, EmptyState, Sheet } from '../components/ui';
+import { Button, Chip, EmptyState, PlusIcon, Sheet } from '../components/ui';
 import { useToast } from '../components/ui';
 
 export function LibraryPage() {
@@ -84,7 +84,7 @@ export function LibraryPage() {
               <button
                 aria-label={ex.isFavourite ? `Remove ${ex.name} from favourites` : `Add ${ex.name} to favourites`}
                 aria-pressed={ex.isFavourite}
-                className="mr-2 flex h-10 w-10 items-center justify-center rounded-lg text-muted hover:text-fg"
+                className="mr-1.5 flex h-10 w-10 items-center justify-center rounded-lg text-muted hover:text-fg"
                 onClick={() => void store.toggleFavourite(ex.id)}
               >
                 <svg width="17" height="17" viewBox="0 0 24 24" fill={ex.isFavourite ? 'var(--app-accent)' : 'none'} stroke={ex.isFavourite ? 'var(--app-accent)' : 'currentColor'} strokeWidth="1.8" aria-hidden="true">
@@ -98,7 +98,8 @@ export function LibraryPage() {
 
       {storageAvailable && (
         <Button variant="primary" className="w-full" onClick={() => setCreateOpen(true)}>
-          + New custom exercise
+          <PlusIcon />
+          New custom exercise
         </Button>
       )}
 

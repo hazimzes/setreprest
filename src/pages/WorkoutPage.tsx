@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../state/appStore';
@@ -30,12 +30,11 @@ export function WorkoutPage() {
   const [restTotal, setRestTotal] = useState(90);
 
   const running = activeSession !== null && !activeSession.paused;
+  // useElapsed re-renders every second while running; elapsed must be computed
+  // on every render (not memoized on activeSession) or the clock freezes.
   useElapsed(running);
 
-  const elapsed = useMemo(
-    () => (activeSession ? sessionElapsedMs(activeSession, Date.now()) : 0),
-    [activeSession]
-  );
+  const elapsed = activeSession ? sessionElapsedMs(activeSession, Date.now()) : 0;
 
   if (!activeSession) {
     return (

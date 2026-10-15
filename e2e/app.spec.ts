@@ -76,6 +76,22 @@ test('start → add exercise → log sets → finish → history shows correct v
   await expect(page.getByText('100 kg').first()).toBeVisible();
 });
 
+test('workout timer ticks in real time without interaction', async ({ page }) => {
+  await startEmptyWorkout(page);
+  const elapsed = page.locator('span[aria-label^="Elapsed"]');
+  await expect(elapsed).toHaveText(/^00:0/);
+  const before = await elapsed.textContent();
+  // Timer must advance on its own — no sets logged, no navigation.
+  await page.waitForFunction(
+    (prev) => {
+      const el = document.querySelector('span[aria-label^="Elapsed"]');
+      return el !== null && el.textContent !== null && el.textContent !== prev;
+    },
+    before,
+    { timeout: 8000 }
+  );
+});
+
 test('refresh mid-workout recovers the session with sets intact', async ({ page }) => {
   await startEmptyWorkout(page);
   await addExerciseByName(page, 'Overhead Press');

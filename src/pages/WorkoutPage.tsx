@@ -27,7 +27,6 @@ export function WorkoutPage() {
   const [renameOpen, setRenameOpen] = useState(false);
   const [draftName, setDraftName] = useState('');
   const [restRemaining, setRestRemaining] = useState<number | null>(null);
-  const [restTotal, setRestTotal] = useState(90);
 
   const running = activeSession !== null && !activeSession.paused;
   // useElapsed re-renders every second while running; elapsed must be computed
@@ -57,7 +56,6 @@ export function WorkoutPage() {
     const set = slot?.sets.find((s) => s.id === setId);
     await store.toggleSetComplete(slotId, setId);
     if (set && !set.completed && settings.restTimerEnabled && restRemaining === null) {
-      setRestTotal(settings.defaultRestSec);
       setRestRemaining(settings.defaultRestSec);
     }
   };
@@ -199,10 +197,8 @@ export function WorkoutPage() {
           onDone={() => setRestRemaining(null)}
           onSkip={() => setRestRemaining(null)}
           onExtend={(extra) => {
-            setRestTotal((t) => t + extra);
             setRestRemaining((r) => (r ?? 0) + extra);
           }}
-          key={`${restTotal}`}
         />
       )}
     </div>

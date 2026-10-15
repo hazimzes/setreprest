@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
- * Fullscreen rest overlay between sets: blurred dimmed backdrop, big centered
- * countdown ring, +15s / Skip controls. Tapping the backdrop skips.
+ * Fullscreen rest overlay between sets: blurred dimmed backdrop, large countdown
+ * ring, +15s / Skip controls. Tapping anywhere skips.
+ *
+ * The countdown runs off an absolute deadline timestamp, not decrements — parent
+ * re-renders (the per-second workout clock) must not reset or slow it.
  */
 export function RestTimer({
   seconds,
@@ -15,22 +18,31 @@ export function RestTimer({
   onSkip: () => void;
   onExtend: (extra: number) => void;
 }) {
+  const deadlineRef = useRef(Date.now() + seconds * 1000);
   const [remaining, setRemaining] = useState(seconds);
+  const cbRef = useRef({ onDone, onSkip, onExtend });
+  cbRef.current = { onDone, onSkip, onExtend };
 
   useEffect(() => {
-    setRemaining(seconds);
-  }, [seconds]);
+    const id = setInterval(() => {
+      const left = Math.max(0, Math.ceil((deadlineRef.current - Date.now()) / 1000));
+      setRemaining(left);
+      if (left <= 0) {
+        clearInterval(id);
+        cbRef.current.onDone();
+      }
+    }, 250);
+    return () => clearInterval(id);
+  }, []);
 
-  useEffect(() => {
-    if (remaining <= 0) {
-      onDone();
-      return;
-    }
-    const t = setTimeout(() => setRemaining((r) => r - 1), 1000);
-    return () => clearTimeout(t);
-  }, [remaining, onDone]);
+  const extend = (extra: number) => {
+    deadlineRef.current += extra * 1000;
+    setRemaining(Math.max(0, Math.ceil((deadlineRef.current - Date.now()) / 1000)));
+    cbRef.current.onExtend(extra);
+  };
 
-  const pct = seconds > 0 ? remaining / seconds : 0;
+  const total = Math.round(seconds);
+  const pct = total > 0 ? remaining / total : 0;
   const R = 88;
   const C = 2 * Math.PI * R;
 
@@ -61,7 +73,7 @@ export function RestTimer({
       <div className="flex items-center gap-3">
         <button
           className="h-11 rounded-[8px] border border-line-strong bg-surface px-5 text-sm font-medium text-fg transition-colors hover:bg-raised"
-          onClick={(e) => { e.stopPropagation(); onExtend(15); }}
+          onClick={(e) => { e.stopPropagation(); extend(15); }}
         >
           +15s
         </button>

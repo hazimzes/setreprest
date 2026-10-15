@@ -80,7 +80,7 @@ export function HomePage() {
           {templates.length > 0 && (
             <div className="space-y-1.5">
               <p className="text-xs font-medium uppercase tracking-wide text-muted">Start from template</p>
-              <div className="flex gap-2 overflow-x-auto pb-1">
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
                 {templates.slice(0, 8).map((t) => (
                   <button
                     key={t.id}

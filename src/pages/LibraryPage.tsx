@@ -42,13 +42,13 @@ export function LibraryPage() {
       />
 
       <div className="space-y-2">
-        <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter by equipment">
+        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none" role="group" aria-label="Filter by equipment">
           <Chip active={equipment === 'all'} onClick={() => setEquipment('all')}>All equipment</Chip>
           {EQUIPMENT_TYPES.map((eq) => (
             <Chip key={eq} active={equipment === eq} onClick={() => setEquipment(eq)}>{eq}</Chip>
           ))}
         </div>
-        <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter by muscle group">
+        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none" role="group" aria-label="Filter by muscle group">
           <Chip active={muscle === 'all'} onClick={() => setMuscle('all')}>All muscles</Chip>
           {MUSCLE_GROUPS.map((m) => (
             <Chip key={m} active={muscle === m} onClick={() => setMuscle(m)}>{m}</Chip>

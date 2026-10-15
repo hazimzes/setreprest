@@ -38,7 +38,7 @@ export function GymTabs({
           </button>
         )}
       </div>
-      <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-auto pb-1">
+      <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-auto pb-1 scrollbar-none">
         {items.map((item) => {
           const active = selected === item.id;
           return (

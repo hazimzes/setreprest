@@ -123,7 +123,7 @@ export function ExerciseDetailPage() {
       </header>
 
       {gyms.length > 0 && (
-        <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter progress by gym">
+        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none" role="group" aria-label="Filter progress by gym">
           <Chip active={gymFilter === ''} onClick={() => setGymFilter('')}>All gyms</Chip>
           {gyms.map((g) => (
             <Chip key={g.id} active={gymFilter === g.id} onClick={() => setGymFilter(g.id)}>

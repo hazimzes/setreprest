@@ -45,7 +45,7 @@ export function AddExerciseSheet({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter by equipment">
+      <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none" role="group" aria-label="Filter by equipment">
         <Chip active={equipment === 'all'} onClick={() => setEquipment('all')}>All</Chip>
         {EQUIPMENT_TYPES.map((eq) => (
           <Chip key={eq} active={equipment === eq} onClick={() => setEquipment(eq)}>

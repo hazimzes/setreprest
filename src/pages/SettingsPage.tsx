@@ -329,6 +329,7 @@ export function SettingsPage() {
             : 'Adds ~10 weeks of sample training across three gyms, with templates and progression.'
         }
         confirmLabel="Load demo data"
+        pin="1205"
         onConfirm={() => {
           void store
             .loadDemoData()

@@ -142,6 +142,7 @@ export function ConfirmSheet({
   confirmLabel = 'Confirm',
   danger = false,
   requireText,
+  pin,
   onConfirm,
   onClose,
   children,
@@ -152,6 +153,8 @@ export function ConfirmSheet({
   confirmLabel?: string;
   danger?: boolean;
   requireText?: string;
+  /** Numeric gate: confirm stays disabled until the masked input matches. */
+  pin?: string;
   onConfirm: () => void;
   onClose: () => void;
   children?: ReactNode;
@@ -161,7 +164,9 @@ export function ConfirmSheet({
     if (open) setTyped('');
   }, [open]);
 
-  const blocked = requireText !== undefined && typed !== requireText;
+  const blocked =
+    (requireText !== undefined && typed !== requireText) ||
+    (pin !== undefined && typed !== pin);
 
   return (
     <Sheet
@@ -196,6 +201,19 @@ export function ConfirmSheet({
           value={typed}
           onChange={(e) => setTyped(e.target.value)}
           aria-label={`Type ${requireText} to confirm`}
+        />
+      )}
+      {pin !== undefined && (
+        <input
+          type="password"
+          inputMode="numeric"
+          autoComplete="off"
+          maxLength={pin.length}
+          className="tnum mt-3 w-full rounded-[8px] border border-line bg-raised px-2.5 py-2 text-center text-lg tracking-[0.5em] text-fg outline-none focus:border-line-strong"
+          value={typed}
+          onChange={(e) => setTyped(e.target.value.replace(/\D/g, '').slice(0, pin.length))}
+          aria-label="Enter PIN to continue"
+          placeholder={'•'.repeat(pin.length)}
         />
       )}
     </Sheet>

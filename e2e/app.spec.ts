@@ -389,7 +389,11 @@ test('progress page renders trends from demo data', async ({ page }) => {
   // seed demo via settings
   await page.goto(APP + '#/settings');
   await page.getByRole('button', { name: 'Load demo dataset' }).click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Load demo data' }).click();
+  const confirm = page.getByRole('dialog').getByRole('button', { name: 'Load demo data' });
+  await expect(confirm).toBeDisabled(); // PIN gate
+  await page.getByLabel('Enter PIN to continue').fill('1205');
+  await expect(confirm).toBeEnabled();
+  await confirm.click();
   await page.waitForSelector('text=Demo data loaded', { timeout: 15000 });
 
   await page.getByRole('link', { name: 'Progress' }).click();

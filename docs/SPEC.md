@@ -78,6 +78,11 @@ reviewing history and managing templates/library.
 - Manage (add/rename/delete) from Settings or Home. Deleting a gym keeps historical
   session tags for reference.
 
+### Demo data
+- Settings gate: loading the sample dataset requires the device PIN (masked 4-digit
+  input; confirm stays disabled until it matches). Prevents accidental pollution of
+  real training history.
+
 ### Data management
 - Automatic persistence after every mutation; explicit "saved" indicator not shown
   (writes are fast and awaited in-memory first).

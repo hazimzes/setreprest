@@ -72,6 +72,7 @@ export interface AppStore {
   duplicateTemplate(id: string): Promise<string>;
 
   /* Data tools */
+  loadDemoData(): Promise<void>;
   exportBackupFile(): Promise<void>;
   importBackupFromText(text: string, mode: ImportMode): Promise<ImportResult>;
   resetAllData(): Promise<void>;

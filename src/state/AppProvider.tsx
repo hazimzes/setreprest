@@ -24,6 +24,7 @@ import {
   type ImportMode,
 } from '../data/backupService';
 import { buildHistoryCsv, buildSessionSummaryCsv } from '../domain/csv';
+import { buildDemoData } from '../domain/demoData';
 import { AppStoreContext, type AppState, type AppStore } from './appStore';
 
 const now = () => Date.now();
@@ -657,6 +658,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   /* ------------------------- Data tools -------------------------- */
 
+  const loadDemoData = useCallback(async () => {
+    // Route the generated dataset through the normal validated import path —
+    // demo data gets the same checksum + referential checks as a real backup.
+    const data = buildDemoData(state.exercises, Date.now());
+    const { computeChecksum } = await import('../domain/backup');
+    const backup = {
+      app: 'setreprest' as const,
+      schemaVersion: 2,
+      exportedAt: Date.now(),
+      checksum: await computeChecksum(data),
+      data,
+    };
+    await importBackup(JSON.stringify(backup), 'merge');
+    const [allSessions, gyms, templates] = await Promise.all([
+      repo.listSessions(),
+      repo.listGyms(),
+      repo.listTemplates(),
+    ]);
+    setState((prev) => ({
+      ...prev,
+      sessions: allSessions.filter((s) => s.status === 'completed'),
+      gyms,
+      templates,
+    }));
+  }, [state.exercises]);
+
   const exportBackupFile = useCallback(async () => {
     const backup = await exportBackup();
     downloadJsonBackup(backup);
@@ -746,6 +773,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       saveTemplate,
       deleteTemplate,
       duplicateTemplate,
+      loadDemoData,
       exportBackupFile,
       importBackupFromText,
       resetAllData: resetAllDataOp,
@@ -783,9 +811,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       saveTemplate,
       deleteTemplate,
       duplicateTemplate,
+      loadDemoData,
       exportBackupFile,
       importBackupFromText,
       resetAllDataOp,
+      loadDemoData,
       exportHistoryCsv,
       exportSummaryCsv,
     ]

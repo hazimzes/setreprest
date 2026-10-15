@@ -388,6 +388,24 @@ describe('gyms', () => {
   });
 });
 
+describe('demo data', () => {
+  it('loads demo block: sessions, gyms and templates appear in state', async () => {
+    const app = await renderApp();
+    await act(async () => {
+      await app.store.loadDemoData();
+    });
+    expect(app.store.state.sessions.length).toBeGreaterThanOrEqual(28);
+    expect(app.store.state.gyms).toHaveLength(3);
+    expect(app.store.state.templates).toHaveLength(3);
+    // Idempotent on second load (stable demo ids merge, not duplicate)
+    const count = app.store.state.sessions.length;
+    await act(async () => {
+      await app.store.loadDemoData();
+    });
+    expect(app.store.state.sessions.length).toBe(count);
+  });
+});
+
 describe('settings + favourites', () => {
   it('favourite toggle persists across provider remount', async () => {
     const app = await renderApp();

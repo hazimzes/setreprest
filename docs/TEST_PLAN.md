@@ -14,8 +14,8 @@ npm run lint
 npm run build
 ```
 
-Latest executed results: **55/55 unit & component tests pass** (5 files),
-**11/11 e2e tests pass**, typecheck PASS, lint PASS (0 problems),
+Latest executed results: **61/61 unit & component tests pass** (6 files),
+**12/12 e2e tests pass**, typecheck PASS, lint PASS (0 problems),
 production build PASS (base `/setreprest/` verified in output).
 
 ## 6. Gym feature (added 2026-10-15)
@@ -29,6 +29,15 @@ production build PASS (base `/setreprest/` verified in output).
 | 6.5 | CSV history includes gym column (empty for untagged sessions) | PASS — `csv.test.ts` + e2e CSV output |
 | 6.6 | E2E: create gyms → Home tabs select → "Start workout at <gym>" → gym badge in workout header → history badge + gym filter → per-gym PR/history filter on exercise page → selection persists across reload | PASS — `e2e/app.spec.ts` |
 | 6.7 | Gym manager in Settings: add, rename, delete with workout-count confirm | PASS — covered by integration ops + e2e Home/Settings flows |
+
+## 7. Demo dataset (added 2026-10-15)
+
+| # | Case | Result |
+|---|------|--------|
+| 7.1 | Generator: 3 gyms, 3 templates, ≥28 completed sessions, deterministic output, valid shapes, referential integrity, squat progression present, gym tags on all sessions | PASS — `demoData.test.ts` |
+| 7.2 | Load through the store: state populated, second load idempotent (stable `demo-` ids merge) | PASS — integration |
+| 7.3 | Demo merge passes full backup validation (checksum + referential checks) | PASS — exercises exercised via import path |
+| 7.4 | Charts read chronologically; per-gym PR/history scoping correct (PR card follows gym filter) | PASS — visual + programmatic check; chart sort bug found & fixed |
 
 ## 1. Domain unit tests (Vitest)
 

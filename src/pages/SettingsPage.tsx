@@ -10,6 +10,7 @@ export function SettingsPage() {
   const [pendingImport, setPendingImport] = useState<{ text: string; name: string } | null>(null);
   const [importMode, setImportMode] = useState<'merge' | 'replace'>('merge');
   const [resetOpen, setResetOpen] = useState(false);
+  const [demoOpen, setDemoOpen] = useState(false);
   const [gymEdit, setGymEdit] = useState<{ id: string; name: string } | null>(null);
   const [gymDelete, setGymDelete] = useState<{ id: string; name: string; usedBy: number } | null>(null);
 
@@ -108,6 +109,25 @@ export function SettingsPage() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-[13px] font-semibold tracking-tight">Demo data</h2>
+        <div className="space-y-2 rounded-[10px] border border-line bg-surface p-4">
+          <p className="text-xs leading-relaxed text-muted">
+            Loads a sample training block: ~10 weeks of push/pull/legs across three gyms,
+            with templates, progression, RPE and personal records — so you can see every
+            screen populated. Merges into existing history and is safe to load once;
+            use “Reset all data” below to clear it.
+          </p>
+          <Button
+            className="w-full"
+            disabled={!storageAvailable}
+            onClick={() => setDemoOpen(true)}
+          >
+            Load demo dataset
+          </Button>
         </div>
       </section>
 
@@ -296,6 +316,24 @@ export function SettingsPage() {
           if (gymDelete) {
             void store.deleteGym(gymDelete.id).then(() => toast('Gym deleted', 'success'));
           }
+        }}
+      />
+
+      <ConfirmSheet
+        open={demoOpen}
+        onClose={() => setDemoOpen(false)}
+        title="Load demo dataset?"
+        message={
+          sessions.length > 0
+            ? `You have ${sessions.length} real workouts. The demo block (~35 sessions, 3 gyms, 3 templates) will merge into your history alongside them.`
+            : 'Adds ~10 weeks of sample training across three gyms, with templates and progression.'
+        }
+        confirmLabel="Load demo data"
+        onConfirm={() => {
+          void store
+            .loadDemoData()
+            .then(() => toast('Demo data loaded', 'success'))
+            .catch((e: Error) => toast(e.message, 'error'));
         }}
       />
 

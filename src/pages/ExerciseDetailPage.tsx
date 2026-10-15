@@ -46,12 +46,16 @@ export function ExerciseDetailPage() {
     [sessions, id, gymFilter]
   );
   const prTimeline = useMemo(
-    () => (id ? personalRecordTimeline(sessions, id) : []),
-    [sessions, id]
+    () => (id ? personalRecordTimeline(relevantSessions, id) : []),
+    [relevantSessions, id]
+  );
+  const chronological = useMemo(
+    () => [...relevantSessions].sort((a, b) => a.startedAt - b.startedAt),
+    [relevantSessions]
   );
   const e1rmData = useMemo(
     () =>
-      relevantSessions.map((s) => {
+      chronological.map((s) => {
         const sets = s.exercises.filter((ex) => ex.exerciseId === id).flatMap((ex) => ex.sets);
         const best = bestSet(sets);
         const e1rm = best ? estimateOneRepMax(best.set.weight, best.set.reps) : null;
@@ -60,11 +64,11 @@ export function ExerciseDetailPage() {
           e1rm: e1rm !== null ? Math.round(e1rm * 10) / 10 : null,
         };
       }),
-    [relevantSessions, id]
+    [chronological, id]
   );
   const volumeData = useMemo(
     () =>
-      relevantSessions.map((s) => ({
+      chronological.map((s) => ({
         label: formatDate(s.startedAt),
         volume:
           Math.round(
@@ -74,7 +78,7 @@ export function ExerciseDetailPage() {
               .reduce((sum, set) => sum + setVolume(set), 0) * 10
           ) / 10,
       })),
-    [relevantSessions, id]
+    [chronological, id]
   );
 
   if (!exercise) {

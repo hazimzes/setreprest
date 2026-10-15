@@ -130,20 +130,29 @@ interface AppSettings {
 ```ts
 interface BackupFile {
   app: 'setreprest';
-  schemaVersion: number;   // DB version the data was written with
+  schemaVersion: number;   // 2 = current (v1 backups without gyms still import)
   exportedAt: number;
-  checksum: string;        // SHA-256 of canonical JSON of {exercises, sessions, templates, settings}
-  data: { exercises: Exercise[]; sessions: Session[]; templates: Template[]; settings: AppSettings | null };
+  checksum: string;        // SHA-256 of canonical JSON of the data object
+  data: {
+    gyms: Gym[];
+    exercises: Exercise[];
+    sessions: Session[];
+    templates: Template[];
+    settings: AppSettings | null;
+  };
 }
 ```
 
 Validation checks `app`, `schemaVersion ≤ current`, array shapes, required fields,
 enum values, referential integrity (session/template exerciseIds exist), and
 checksum equality. On failure: reject with a specific message, write nothing.
+Gyms are validated structurally but session `gymId`s are NOT required to reference
+an existing gym (a deleted gym leaves historical tags in place, displayed unnamed).
+v1 backups (schemaVersion 1, no gyms array) import cleanly with zero gyms.
 
 ## CSV export
 
-One row per set: `date, session_name, exercise, set_type, weight, unit, reps, rpe, completed, notes`.
+One row per set: `date, session_name, gym, exercise, set_type, weight, unit, reps, rpe, completed, notes`.
 UTF-8 BOM, RFC 4180 quoting, CRLF line endings.
 
 ## Seed catalog

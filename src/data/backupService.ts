@@ -11,13 +11,15 @@ import { DataError, getDb } from './db';
 export async function exportBackup(): Promise<BackupFile> {
   const database = getDb();
   try {
-    const [exercises, sessions, templates, settingsRow] = await Promise.all([
+    const [gyms, exercises, sessions, templates, settingsRow] = await Promise.all([
+      database.gyms.toArray(),
       database.exercises.toArray(),
       database.sessions.toArray(),
       database.templates.toArray(),
       database.settings.get('app'),
     ]);
     const data = {
+      gyms,
       exercises,
       sessions,
       templates,
@@ -42,6 +44,7 @@ export interface ImportResult {
   exercises: number;
   sessions: number;
   templates: number;
+  gyms: number;
 }
 
 /**
@@ -67,6 +70,7 @@ export async function importBackup(
   try {
     await database.transaction(
       'rw',
+      database.gyms,
       database.exercises,
       database.sessions,
       database.templates,
@@ -74,10 +78,12 @@ export async function importBackup(
       async () => {
         if (mode === 'replace') {
           await Promise.all([
+            database.gyms.clear(),
             database.exercises.clear(),
             database.sessions.clear(),
             database.templates.clear(),
           ]);
+          await database.gyms.bulkPut(backup.data.gyms ?? []);
           await database.exercises.bulkPut(backup.data.exercises);
           await database.sessions.bulkPut(backup.data.sessions);
           await database.templates.bulkPut(backup.data.templates);
@@ -87,6 +93,8 @@ export async function importBackup(
           return;
         }
         // merge — existing ids keep their local version; new ids are added.
+        const localGymIds = new Set((await database.gyms.toArray()).map((g) => g.id));
+        await database.gyms.bulkPut((backup.data.gyms ?? []).filter((g) => !localGymIds.has(g.id)));
         const localExerciseIds = new Set((await database.exercises.toArray()).map((e) => e.id));
         const newExercises = backup.data.exercises.filter((e) => !localExerciseIds.has(e.id));
         await database.exercises.bulkPut(newExercises);
@@ -104,6 +112,7 @@ export async function importBackup(
       exercises: backup.data.exercises.length,
       sessions: backup.data.sessions.length,
       templates: backup.data.templates.length,
+      gyms: backup.data.gyms?.length ?? 0,
     };
   } catch (err) {
     if (err instanceof ValidationError) throw err;
@@ -116,6 +125,7 @@ export async function resetAllData(): Promise<void> {
   try {
     await database.transaction(
       'rw',
+      database.gyms,
       database.exercises,
       database.sessions,
       database.templates,

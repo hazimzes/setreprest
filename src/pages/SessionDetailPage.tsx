@@ -9,7 +9,7 @@ export function SessionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const store = useAppStore();
-  const { sessions, exercises, settings } = store.state;
+  const { sessions, exercises, settings, gyms } = store.state;
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const session = sessions.find((s) => s.id === id);
@@ -31,7 +31,15 @@ export function SessionDetailPage() {
         <Link to="/history" className="text-xs text-muted hover:underline">← History</Link>
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="truncate text-lg font-semibold">{session.name}</h1>
+            <h1 className="truncate text-lg font-semibold">
+              {session.name}
+              {gyms.find((g) => g.id === session.gymId) && ' '}
+              {gyms.find((g) => g.id === session.gymId) && (
+                <span className="ml-2 rounded-md bg-accent-soft px-1.5 py-0.5 align-middle text-[10px] font-medium text-muted">
+                  {gyms.find((g) => g.id === session.gymId)!.name}
+                </span>
+              )}
+            </h1>
             <p className="tnum text-xs text-muted">
               {formatDate(session.startedAt)} · {formatDuration(session.accumulatedActiveMs)}
               {session.templateId ? ' · from template' : ''}

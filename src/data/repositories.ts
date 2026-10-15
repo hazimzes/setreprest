@@ -1,5 +1,5 @@
 import { createId } from '../domain/id';
-import type { AppSettings, Exercise, Session, Template } from '../domain/models';
+import type { AppSettings, Exercise, Gym, Session, Template } from '../domain/models';
 import { ValidationError } from '../domain/validation';
 import { DataError, getDb } from './db';
 
@@ -84,6 +84,34 @@ export async function findExerciseByName(name: string): Promise<Exercise | undef
   const target = name.trim().toLowerCase();
   const all = await getDb().exercises.toArray();
   return all.find((e) => e.name.trim().toLowerCase() === target);
+}
+
+/* ---------------- Gyms ---------------- */
+
+export async function listGyms(): Promise<Gym[]> {
+  try {
+    return (await getDb().gyms.toArray()).sort((a, b) => a.createdAt - b.createdAt);
+  } catch (err) {
+    throw new DataError('Could not load gyms', err);
+  }
+}
+
+export async function putGym(gym: Gym): Promise<void> {
+  try {
+    await getDb().gyms.put(gym);
+  } catch (err) {
+    throw new DataError('Could not save the gym', err);
+  }
+}
+
+export async function deleteGym(id: string): Promise<void> {
+  // Sessions keep their gymId as historical provenance; they display the gym
+  // name only when the gym still exists.
+  try {
+    await getDb().gyms.delete(id);
+  } catch (err) {
+    throw new DataError('Could not delete the gym', err);
+  }
 }
 
 /* ---------------- Sessions ---------------- */

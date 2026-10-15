@@ -60,6 +60,15 @@ reviewing history and managing templates/library.
   (Epley: w × (1 + reps/30), reps ≤ 12 eligible), volume-per-session chart.
 - Overall: sessions per week, total volume trend, recent PR list.
 
+### Gyms
+- Named training locations shown as selectable cards on Home ("Where are you training?").
+- Starting a workout tags the session with the selected gym; Home stats (last workout,
+  4-week streak) and History filter by gym.
+- Exercise analytics (PR, e1RM and volume charts, history) filter per gym — weights are
+  never merged or converted across gyms; each gym keeps independent progression.
+- Manage (add/rename/delete) from Settings or Home. Deleting a gym keeps historical
+  session tags for reference.
+
 ### Data management
 - Automatic persistence after every mutation; explicit "saved" indicator not shown
   (writes are fast and awaited in-memory first).

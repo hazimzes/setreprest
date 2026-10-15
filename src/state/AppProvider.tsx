@@ -3,6 +3,7 @@ import {
   DEFAULT_SETTINGS,
   type AppSettings,
   type Exercise,
+  type Gym,
   type Session,
   type SessionExercise,
   type SetEntry,
@@ -57,6 +58,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     sessions: [],
     activeSession: null,
     templates: [],
+    gyms: [],
   });
 
   /** Mirror of activeSession for imperative ops that must not read stale closures. */
@@ -84,11 +86,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           return;
         }
         const settings = await ensureSeeded();
-        const [exercises, allSessions, templates, activeSession] = await Promise.all([
+        const [exercises, allSessions, templates, activeSession, gyms] = await Promise.all([
           repo.listExercises(),
           repo.listSessions(),
           repo.listTemplates(),
           repo.getActiveSession(),
+          repo.listGyms(),
         ]);
         if (cancelled) return;
         setState((prev) => ({
@@ -100,6 +103,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           sessions: allSessions.filter((s) => s.status === 'completed'),
           activeSession: activeSession ?? null,
           templates,
+          gyms,
         }));
       } catch (err) {
         if (cancelled) return;
@@ -166,7 +170,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   /* --------------------- Session lifecycle ------------------- */
 
   const startSession = useCallback(
-    async (input?: { name?: string; templateId?: string }) => {
+    async (input?: { name?: string; templateId?: string; gymId?: string }) => {
       let template: Template | undefined;
       if (input?.templateId) {
         template = state.templates.find((t) => t.id === input.templateId);
@@ -193,11 +197,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             ...(te.targetReps !== undefined ? { targetReps: te.targetReps } : {}),
           })) ?? [],
         templateId: input?.templateId,
+        gymId: input?.gymId ?? (state.settings.selectedGymId ? state.settings.selectedGymId : undefined),
       };
       await repo.putSession(session);
       applySession(session);
     },
-    [state.templates, applySession]
+    [state.templates, state.settings.selectedGymId, applySession]
   );
 
   const deleteSessionById = useCallback(async (id: string) => {
@@ -493,6 +498,64 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [state.sessions, applySession]
   );
 
+  /* ---------------------------- Gyms ------------------------------ */
+
+  const refreshGyms = useCallback(async () => {
+    const gyms = await repo.listGyms();
+    setState((prev) => ({ ...prev, gyms }));
+  }, []);
+
+  const createGym = useCallback(
+    async (name: string, notes?: string) => {
+      const trimmed = name.trim();
+      if (!trimmed) throw new ValidationError('Gym needs a name.');
+      if (state.gyms.some((g) => g.name.trim().toLowerCase() === trimmed.toLowerCase())) {
+        throw new ValidationError(`A gym named "${trimmed}" already exists.`);
+      }
+      const gym: Gym = {
+        id: createId(),
+        name: trimmed,
+        ...(notes ? { notes } : {}),
+        createdAt: now(),
+      };
+      await repo.putGym(gym);
+      await refreshGyms();
+      return gym;
+    },
+    [state.gyms, refreshGyms]
+  );
+
+  const renameGym = useCallback(
+    async (id: string, name: string) => {
+      const trimmed = name.trim();
+      if (!trimmed) throw new ValidationError('Gym needs a name.');
+      const gym = state.gyms.find((g) => g.id === id);
+      if (!gym) throw new ValidationError('Gym not found.');
+      await repo.putGym({ ...gym, name: trimmed });
+      await refreshGyms();
+    },
+    [state.gyms, refreshGyms]
+  );
+
+  const deleteGymOp = useCallback(
+    async (id: string) => {
+      await repo.deleteGym(id);
+      await refreshGyms();
+      // If the deleted gym was selected, fall back to all gyms.
+      if (state.settings.selectedGymId === id) {
+        void mutateSettings({ selectedGymId: '' });
+      }
+    },
+    [refreshGyms, state.settings.selectedGymId, mutateSettings]
+  );
+
+  const selectGym = useCallback(
+    (gymId: string) => {
+      void mutateSettings({ selectedGymId: gymId || undefined });
+    },
+    [mutateSettings]
+  );
+
   /* --------------------------- Library --------------------------- */
 
   const refreshExercises = useCallback(async () => {
@@ -601,16 +664,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const importBackupFromText = useCallback(async (text: string, mode: ImportMode) => {
     const result = await importBackup(text, mode);
-    const [exercises, allSessions, templates] = await Promise.all([
+    const [exercises, allSessions, templates, gyms] = await Promise.all([
       repo.listExercises(),
       repo.listSessions(),
       repo.listTemplates(),
+      repo.listGyms(),
     ]);
     setState((prev) => ({
       ...prev,
       exercises,
       sessions: allSessions.filter((s) => s.status === 'completed'),
       templates,
+      gyms,
       ...(mode === 'replace' ? { activeSession: null } : {}),
     }));
     return result;
@@ -625,6 +690,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       exercises,
       sessions: [],
       templates: [],
+      gyms: [],
       activeSession: null,
       settings,
     }));
@@ -636,9 +702,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   );
 
   const exportHistoryCsv = useCallback(async () => {
-    const csv = buildHistoryCsv(state.sessions, exerciseName, state.settings.units);
+    const gymName = (id: string) => state.gyms.find((g) => g.id === id)?.name ?? '';
+    const csv = buildHistoryCsv(state.sessions, exerciseName, state.settings.units, gymName);
     downloadCsv(csv, `setreprest-history-${dateStamp()}.csv`);
-  }, [state.sessions, state.settings.units, exerciseName]);
+  }, [state.sessions, state.settings.units, state.gyms, exerciseName]);
 
   const exportSummaryCsv = useCallback(async () => {
     const csv = buildSessionSummaryCsv(state.sessions);
@@ -652,6 +719,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       state,
       startSession,
       deleteSessionById,
+      createGym,
+      renameGym,
+      deleteGym: deleteGymOp,
+      selectGym,
       resumeSession,
       pauseSession,
       renameSession,
@@ -685,6 +756,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       state,
       startSession,
       deleteSessionById,
+      createGym,
+      renameGym,
+      deleteGymOp,
+      selectGym,
       resumeSession,
       pauseSession,
       renameSession,

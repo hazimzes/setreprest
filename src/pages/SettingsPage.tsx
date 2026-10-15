@@ -1,15 +1,17 @@
 import { useRef, useState } from 'react';
 import { useAppStore } from '../state/appStore';
-import { Button, ConfirmSheet, Segmented, useToast } from '../components/ui';
+import { Button, ConfirmSheet, Segmented, Sheet, useToast } from '../components/ui';
 
 export function SettingsPage() {
   const store = useAppStore();
-  const { settings, storageAvailable, sessions, exercises } = store.state;
+  const { settings, storageAvailable, sessions, exercises, gyms } = store.state;
   const toast = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pendingImport, setPendingImport] = useState<{ text: string; name: string } | null>(null);
   const [importMode, setImportMode] = useState<'merge' | 'replace'>('merge');
   const [resetOpen, setResetOpen] = useState(false);
+  const [gymEdit, setGymEdit] = useState<{ id: string; name: string } | null>(null);
+  const [gymDelete, setGymDelete] = useState<{ id: string; name: string; usedBy: number } | null>(null);
 
   const onImportFile = async (file: File) => {
     const text = await file.text();
@@ -106,6 +108,43 @@ export function SettingsPage() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold">Gyms</h2>
+        <div className="space-y-2 rounded-2xl border border-line bg-surface p-4">
+          <p className="text-xs text-muted">
+            Tag workouts to a gym and keep per-gym history and personal records. Weights are never shared between gyms — equipment differs.
+          </p>
+          {gyms.length === 0 ? (
+            <p className="text-sm text-muted">No gyms added yet. Add one from the Home screen or here.</p>
+          ) : (
+            <ul className="space-y-1.5">
+              {gyms.map((g) => {
+                const usedBy = sessions.filter((s) => s.gymId === g.id).length;
+                return (
+                  <li key={g.id} className="flex items-center gap-2 rounded-xl border border-line bg-raised px-3 py-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{g.name}</p>
+                      <p className="text-[11px] text-muted">
+                        {usedBy} {usedBy === 1 ? 'workout' : 'workouts'}
+                        {settings.selectedGymId === g.id && ' · selected on Home'}
+                      </p>
+                    </div>
+                    <Button onClick={() => setGymEdit({ id: g.id, name: g.name })}>Rename</Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => setGymDelete({ id: g.id, name: g.name, usedBy })}
+                    >
+                      Delete
+                    </Button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          <AddGymRow onCreate={(name) => store.createGym(name).then(() => toast('Gym added', 'success'))} />
         </div>
       </section>
 
@@ -207,6 +246,59 @@ export function SettingsPage() {
         }}
       />
 
+      <Sheet
+        open={gymEdit !== null}
+        onClose={() => setGymEdit(null)}
+        title="Rename gym"
+        footer={
+          <Button
+            variant="primary"
+            className="w-full"
+            disabled={!gymEdit?.name.trim()}
+            onClick={() => {
+              if (gymEdit) {
+                void store
+                  .renameGym(gymEdit.id, gymEdit.name)
+                  .then(() => toast('Gym renamed', 'success'))
+                  .catch((e: Error) => toast(e.message, 'error'));
+              }
+              setGymEdit(null);
+            }}
+          >
+            Save
+          </Button>
+        }
+      >
+        <input
+          aria-label="Gym name"
+          className="w-full rounded-xl border border-line bg-raised px-3 py-2.5 text-sm outline-none focus-visible:outline-accent"
+          value={gymEdit?.name ?? ''}
+          onChange={(e) => setGymEdit((prev) => (prev ? { ...prev, name: e.target.value } : prev))}
+        />
+      </Sheet>
+
+      <ConfirmSheet
+        open={gymDelete !== null}
+        onClose={() => setGymDelete(null)}
+        title="Delete gym?"
+        message={
+          gymDelete
+            ? `"${gymDelete.name}" will be removed from the selector.${
+                gymDelete.usedBy > 0
+                  ? ` ${gymDelete.usedBy} past ${gymDelete.usedBy === 1 ? 'workout' : 'workouts'} keep their gym tag for reference, shown as unnamed.`
+                  : ''
+              }`
+            : ''
+        }
+        confirmLabel="Delete gym"
+        danger
+        onConfirm={() => {
+          if (gymDelete) {
+            void store.deleteGym(gymDelete.id).then(() => toast('Gym deleted', 'success'));
+          }
+        }}
+      />
+
       <ConfirmSheet
         open={pendingImport !== null}
         onClose={() => setPendingImport(null)}
@@ -237,6 +329,40 @@ export function SettingsPage() {
           </div>
         )}
       </ConfirmSheet>
+    </div>
+  );
+}
+
+function AddGymRow({ onCreate }: { onCreate: (name: string) => Promise<void> }) {
+  const [draft, setDraft] = useState('');
+  const toast = useToast();
+  return (
+    <div className="flex gap-2 pt-1">
+      <input
+        aria-label="New gym name"
+        className="min-w-0 flex-1 rounded-xl border border-line bg-raised px-3 py-2 text-sm outline-none focus-visible:outline-accent"
+        placeholder="New gym name…"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && draft.trim()) {
+            void onCreate(draft)
+              .then(() => setDraft(''))
+              .catch((err: Error) => toast(err.message, 'error'));
+          }
+        }}
+      />
+      <Button
+        variant="primary"
+        disabled={!draft.trim()}
+        onClick={() =>
+          void onCreate(draft)
+            .then(() => setDraft(''))
+            .catch((err: Error) => toast(err.message, 'error'))
+        }
+      >
+        Add
+      </Button>
     </div>
   );
 }

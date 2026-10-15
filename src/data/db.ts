@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { AppSettings, Exercise, Session, Template } from '../domain/models';
+import type { AppSettings, Exercise, Gym, Session, Template } from '../domain/models';
 
 /**
  * Settings are stored as key/value rows; the app-level singleton uses key 'app'.
@@ -11,15 +11,16 @@ export interface SettingsRow {
 }
 
 /**
- * Schema v1 — initial release. Sessions embed their exercises and sets
- * (aggregate-per-row); a session is always read/written as a whole.
- * Future schema changes append new versions with .upgrade(); never edit old ones.
+ * Schema history — future changes append new versions with .upgrade(); never edit
+ * old ones. v1: initial release (exercises/sessions/templates/settings). Sessions
+ * embed their exercises and sets (aggregate-per-row).
  */
 export class SetRepRestDB extends Dexie {
   exercises!: Table<Exercise, string>;
   sessions!: Table<Session, string>;
   templates!: Table<Template, string>;
   settings!: Table<SettingsRow, string>;
+  gyms!: Table<Gym, string>;
 
   constructor() {
     super('setreprest');
@@ -28,6 +29,11 @@ export class SetRepRestDB extends Dexie {
       sessions: 'id, status, startedAt',
       templates: 'id, name',
       settings: 'key',
+    });
+    // v2: gyms table (training locations). Sessions gain an optional gymId field
+    // in their embedded structure — no index needed, no data transform required.
+    this.version(2).stores({
+      gyms: 'id, name',
     });
   }
 }

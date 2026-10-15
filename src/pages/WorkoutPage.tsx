@@ -19,7 +19,7 @@ function useElapsed(enabled: boolean) {
 
 export function WorkoutPage() {
   const store = useAppStore();
-  const { activeSession, settings, exercises } = store.state;
+  const { activeSession, settings, exercises, gyms } = store.state;
   const navigate = useNavigate();
   const [addOpen, setAddOpen] = useState(false);
   const [substituteFor, setSubstituteFor] = useState<string | null>(null);
@@ -93,6 +93,11 @@ export function WorkoutPage() {
           )}
         </div>
         <p className="mt-1 text-xs text-muted">
+          {gyms.find((g) => g.id === activeSession.gymId) && (
+            <span className="mr-2 rounded-md bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium">
+              {gyms.find((g) => g.id === activeSession.gymId)!.name}
+            </span>
+          )}
           {countCompletedSets(activeSession)} sets done · volume {Math.round(sessionVolume(activeSession) * 10) / 10} {settings.units}
         </p>
       </header>

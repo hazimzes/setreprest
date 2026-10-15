@@ -9,12 +9,15 @@ let repo: RepoModule;
 let seed: SeedModule;
 let backup: BackupModule;
 
+const modules: { repo?: unknown } = {};
+
 async function freshModules() {
   vi.resetModules();
   await import('./db');
   repo = await import('./repositories');
   seed = await import('./seedRunner');
   backup = await import('./backupService');
+  modules.repo = repo;
 }
 
 beforeEach(async () => {
@@ -26,6 +29,59 @@ beforeEach(async () => {
   globalThis.indexedDB = fresh;
   (Dexie as unknown as { dependencies: { indexedDB: IDBFactory } }).dependencies.indexedDB = fresh;
   await freshModules();
+});
+
+describe('schema migration v1 -> v2', () => {
+  it('upgrades a real v1 database: data preserved, gyms table available', async () => {
+    const Dexie = (await import('dexie')).default;
+
+    // 1. Create a genuine v1-schema database with data, as an old install would have.
+    type DexieTable = { put(value: unknown): Promise<unknown> };
+    class LegacyDB extends Dexie {
+      exercises!: DexieTable;
+      sessions!: DexieTable;
+      settings!: DexieTable;
+      constructor() {
+        super('setreprest');
+        this.version(1).stores({
+          exercises: 'id, name, isFavourite, equipment',
+          sessions: 'id, status, startedAt',
+          templates: 'id, name',
+          settings: 'key',
+        });
+      }
+    }
+    const legacy = new LegacyDB();
+    await legacy.open();
+    await legacy.exercises.put({
+      id: 'legacy-ex', name: 'Legacy Lift', muscleGroups: ['chest'],
+      equipment: 'barbell', isCustom: false, isFavourite: false, createdAt: 1,
+    });
+    await legacy.sessions.put({
+      id: 'legacy-s', name: 'Old session', status: 'completed', startedAt: 1,
+      accumulatedActiveMs: 0, paused: true, exercises: [],
+    });
+    await legacy.settings.put({
+      key: 'app', value: {
+        units: 'kg', defaultRestSec: 90, restTimerEnabled: true, theme: 'dark', seededVersion: 1,
+      },
+    });
+    legacy.close();
+    void Dexie;
+
+    // 2. Open with the current app DB (v2) and verify everything survived.
+    await freshModules();
+    const repo = modules.repo as typeof import('./repositories');
+    expect((await repo.listExercises()).map((e) => e.id)).toContain('legacy-ex');
+    expect((await repo.listSessions()).map((s) => s.id)).toContain('legacy-s');
+    const settings = await repo.loadSettings();
+    expect(settings?.units).toBe('kg');
+    expect(await repo.listGyms()).toEqual([]);
+
+    // 3. Gyms work on the upgraded database.
+    await repo.putGym({ id: 'g1', name: 'New Gym', createdAt: 2 });
+    expect((await repo.listGyms()).map((g) => g.id)).toEqual(['g1']);
+  });
 });
 
 describe('db + seed', () => {
@@ -228,6 +284,7 @@ describe('backup round-trip', () => {
       schemaVersion: 1,
       exportedAt: 999,
       data: {
+        gyms: [],
         exercises: [exercise],
         sessions: [
           {

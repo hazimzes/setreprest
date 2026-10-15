@@ -49,9 +49,11 @@ Dexie v4 over IndexedDB. Single database `setreprest`, tables:
 | sessions     | id          | one row per session, embedded exercises/sets |
 | templates    | id          | embedded exercise list                 |
 | settings     | key         | key/value singleton                    |
+| gyms         | id          | training locations (v2)                |
 
 Schema versions in `src/data/db.ts` via `db.version(n).stores(...).upgrade(...)`.
-v1 is the initial schema; future migrations append new versions, never edit old ones.
+v1 is the initial schema; v2 adds the gyms table. Future migrations append new
+versions, never edit old ones.
 
 Sessions embed their exercise and set arrays (aggregate-per-row). Rationale: a
 session is always loaded/written as a whole, sets are never queried independently,

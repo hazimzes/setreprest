@@ -89,6 +89,19 @@ export interface Session {
   exercises: SessionExercise[];
   notes?: string;
   templateId?: string;
+  /** Which gym this session happened at (provenance; gym may later be deleted). */
+  gymId?: string;
+}
+
+/**
+ * A training location. Purely organizational — exercises and weights are never
+ * shared or converted across gyms; each gym keeps independent progression.
+ */
+export interface Gym {
+  id: string;
+  name: string;
+  notes?: string;
+  createdAt: number;
 }
 
 export interface TemplateExercise {
@@ -117,6 +130,8 @@ export interface AppSettings {
   theme: Theme;
   /** Exercise catalog seed version already applied to this device. */
   seededVersion: number;
+  /** Last gym selected on Home ('' = all gyms). Persisted for convenience only. */
+  selectedGymId?: string;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {

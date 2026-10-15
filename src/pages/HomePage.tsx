@@ -8,13 +8,20 @@ import {
   sessionVolume,
 } from '../domain/calculations';
 import { Button, ConfirmSheet, EmptyState, Skeleton } from '../components/ui';
+import { GymTabs } from '../components/GymTabs';
 import { useState } from 'react';
 
 export function HomePage() {
   const store = useAppStore();
-  const { status, activeSession, sessions, templates, exercises, settings } = store.state;
+  const { status, activeSession, sessions, templates, exercises, settings, gyms } = store.state;
   const navigate = useNavigate();
   const [discardOpen, setDiscardOpen] = useState(false);
+
+  const selectedGym = settings.selectedGymId ?? '';
+  const gymName = (id: string | undefined) => gyms.find((g) => g.id === id)?.name;
+  const visibleSessions = selectedGym
+    ? sessions.filter((s) => s.gymId === selectedGym)
+    : sessions;
 
   if (status === 'loading') {
     return (
@@ -26,12 +33,20 @@ export function HomePage() {
     );
   }
 
-  const last = sessions[0];
+  const last = visibleSessions[0];
   const fourWeeksAgo = Date.now() - 28 * 24 * 3600 * 1000;
-  const recent = sessions.filter((s) => s.startedAt >= fourWeeksAgo);
+  const recent = visibleSessions.filter((s) => s.startedAt >= fourWeeksAgo);
 
   return (
     <div className="space-y-5">
+      <GymTabs
+        gyms={gyms}
+        selected={selectedGym}
+        storageAvailable={store.state.storageAvailable}
+        onSelect={(id) => store.selectGym(id)}
+        onCreate={(name) => store.createGym(name).then(() => undefined)}
+      />
+
       {activeSession ? (
         <section className="rounded-2xl border border-accent/50 bg-accent-soft p-5">
           <p className="text-xs font-medium uppercase tracking-wide text-muted">Workout in progress</p>
@@ -53,10 +68,14 @@ export function HomePage() {
           <Button
             variant="primary"
             className="h-14 w-full text-base"
-            onClick={() => void store.startSession().then(() => navigate('/workout'))}
+            onClick={() =>
+              void store
+                .startSession({ gymId: selectedGym || undefined })
+                .then(() => navigate('/workout'))
+            }
             disabled={!store.state.storageAvailable}
           >
-            Start empty workout
+            {selectedGym ? `Start workout at ${gymName(selectedGym)}` : 'Start empty workout'}
           </Button>
           {templates.length > 0 && (
             <div className="space-y-1.5">
@@ -67,7 +86,11 @@ export function HomePage() {
                     key={t.id}
                     className="shrink-0 rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm hover:bg-raised disabled:opacity-50"
                     disabled={!store.state.storageAvailable}
-                    onClick={() => void store.startSession({ templateId: t.id }).then(() => navigate('/workout'))}
+                    onClick={() =>
+                      void store
+                        .startSession({ templateId: t.id, gymId: selectedGym || undefined })
+                        .then(() => navigate('/workout'))
+                    }
                   >
                     {t.name}
                     <span className="ml-2 text-xs text-muted">{t.exercises.length} ex</span>
@@ -103,13 +126,25 @@ export function HomePage() {
             to={`/history/${last.id}`}
             className="block rounded-2xl border border-line bg-surface p-4 hover:bg-raised/50"
           >
-            <p className="text-sm font-medium">{last.name}</p>
+            <p className="text-sm font-medium">
+              {last.name}
+              {gymName(last.gymId) && (
+                <span className="ml-2 rounded-md bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium text-muted">
+                  {gymName(last.gymId)}
+                </span>
+              )}
+            </p>
             <p className="tnum mt-1 text-xs text-muted">
               {formatDate(last.startedAt)} · {formatDuration(
                 last.accumulatedActiveMs
               )} · {countCompletedSets(last)} sets · {Math.round(sessionVolume(last) * 10) / 10} {settings.units}
             </p>
           </Link>
+        ) : selectedGym ? (
+          <EmptyState
+            title={`No workouts at ${gymName(selectedGym)} yet`}
+            hint="Start a session here and it will be tracked for this gym."
+          />
         ) : (
           <EmptyState title="No workouts yet" hint="Your first session will show up here." />
         )}
@@ -117,7 +152,9 @@ export function HomePage() {
 
       {recent.length > 0 && (
         <section className="space-y-2">
-          <h3 className="text-sm font-semibold">Last 4 weeks</h3>
+          <h3 className="text-sm font-semibold">
+            Last 4 weeks{selectedGym ? ` — ${gymName(selectedGym)}` : ''}
+          </h3>
           <div className="flex items-end gap-1.5" aria-label={`${recent.length} workouts in the last 4 weeks`}>
             {recent.slice(0, 14).reverse().map((s) => {
               const vol = sessionVolume(s);

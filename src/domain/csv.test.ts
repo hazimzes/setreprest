@@ -62,7 +62,7 @@ describe('CSV export', () => {
     const rows = csv.split('\r\n').filter((r) => r.length > 0);
     expect(rows[0]?.charCodeAt(0)).toBe(0xfeff);
     expect(rows[0]?.slice(1)).toBe(
-      'date,session_name,exercise,set_type,weight,unit,reps,rpe,completed,notes'
+      'date,session_name,gym,exercise,set_type,weight,unit,reps,rpe,completed,notes'
     );
     // Session name contains quotes + comma → quoted and doubled
     expect(rows.some((r) => r.includes('"Push ""A"" day, heavy"'))).toBe(true);

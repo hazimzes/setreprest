@@ -14,9 +14,21 @@ npm run lint
 npm run build
 ```
 
-Latest executed results: **51/51 unit & component tests pass** (5 files),
-**10/10 e2e tests pass**, typecheck PASS, lint PASS (0 problems),
-production build PASS (precache 16 entries, base `/setreprest/` verified in output).
+Latest executed results: **55/55 unit & component tests pass** (5 files),
+**11/11 e2e tests pass**, typecheck PASS, lint PASS (0 problems),
+production build PASS (base `/setreprest/` verified in output).
+
+## 6. Gym feature (added 2026-10-15)
+
+| # | Case | Result |
+|---|------|--------|
+| 6.1 | Gym create (unique case-insensitive), select, session tagged, '' deselects, delete keeps session gymId provenance | PASS — `AppProvider.test.tsx` |
+| 6.2 | Backup round trip preserves gyms | PASS — `AppProvider.test.tsx` |
+| 6.3 | Real v1-schema database upgrades to v2: exercises/sessions/settings preserved, gyms table usable | PASS — `repositories.test.ts` (genuine LegacyDB with only v1 stores) |
+| 6.4 | Backup schema v2: v1 backups (no gyms array) still import | PASS — validateBackupFile treats missing gyms as empty; existing backup tests pass unchanged |
+| 6.5 | CSV history includes gym column (empty for untagged sessions) | PASS — `csv.test.ts` + e2e CSV output |
+| 6.6 | E2E: create gyms → Home tabs select → "Start workout at <gym>" → gym badge in workout header → history badge + gym filter → per-gym PR/history filter on exercise page → selection persists across reload | PASS — `e2e/app.spec.ts` |
+| 6.7 | Gym manager in Settings: add, rename, delete with workout-count confirm | PASS — covered by integration ops + e2e Home/Settings flows |
 
 ## 1. Domain unit tests (Vitest)
 

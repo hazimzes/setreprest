@@ -305,6 +305,89 @@ describe('AppProvider integration (jsdom + fake IndexedDB)', () => {
   });
 });
 
+describe('gyms', () => {
+  it('create → select → start tags session; delete gym keeps session provenance', async () => {
+    const app = await renderApp();
+    const squat = app.store.state.exercises.find((e) => e.name === 'Barbell Squat')!;
+    let gymId = '';
+    await act(async () => {
+      const gym = await app.store.createGym('Gym A');
+      gymId = gym.id;
+    });
+    await act(async () => {
+      await app.store.createGym('Gym B');
+    });
+    expect(app.store.state.gyms).toHaveLength(2);
+
+    act(() => {
+      app.store.selectGym(gymId);
+    });
+    expect(app.store.state.settings.selectedGymId).toBe(gymId);
+
+    await act(async () => {
+      await app.store.startSession();
+    });
+    expect(app.store.state.activeSession!.gymId).toBe(gymId);
+    await act(async () => {
+      await app.store.addSessionExercise(squat.id);
+      await app.store.finishSession();
+    });
+    expect(app.store.state.sessions[0]!.gymId).toBe(gymId);
+
+    // explicit '' deselects
+    act(() => {
+      app.store.selectGym('');
+    });
+    expect(app.store.state.settings.selectedGymId).toBeUndefined();
+
+    await act(async () => {
+      await app.store.startSession({ name: 'No gym' });
+    });
+    expect(app.store.state.activeSession!.gymId).toBeUndefined();
+    await act(async () => {
+      await app.store.discardSession();
+    });
+
+    // deleting a gym keeps historical sessions untouched
+    await act(async () => {
+      await app.store.deleteGym(gymId);
+    });
+    expect(app.store.state.gyms.map((g) => g.name)).toEqual(['Gym B']);
+    expect(app.store.state.sessions[0]!.gymId).toBe(gymId);
+  });
+
+  it('duplicate gym names rejected case-insensitively', async () => {
+    const app = await renderApp();
+    await act(async () => {
+      await app.store.createGym('Fitness First');
+    });
+    await act(async () => {
+      await expect(app.store.createGym('fitness first')).rejects.toThrow(/already exists/);
+    });
+  });
+
+  it('backup round trip preserves gyms', async () => {
+    const app = await renderApp();
+    await act(async () => {
+      await app.store.createGym('Powerhouse');
+    });
+    const backupMod = await import('../data/backupService');
+    const backup = await backupMod.exportBackup();
+    expect(backup.data.gyms).toHaveLength(1);
+    expect(backup.data.gyms[0]!.name).toBe('Powerhouse');
+    const text = JSON.stringify(backup);
+
+    await act(async () => {
+      await app.store.resetAllData();
+    });
+    expect(app.store.state.gyms).toHaveLength(0);
+    await act(async () => {
+      await app.store.importBackupFromText(text, 'replace');
+    });
+    expect(app.store.state.gyms.map((g) => g.name)).toEqual(['Powerhouse']);
+  });
+});
+
 describe('settings + favourites', () => {
   it('favourite toggle persists across provider remount', async () => {
     const app = await renderApp();

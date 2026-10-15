@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { AppSettings, Exercise, Session, SetEntry, Template } from '../domain/models';
+import type { AppSettings, Exercise, Gym, Session, SetEntry, Template } from '../domain/models';
 import type { ImportResult, ImportMode } from '../data/backupService';
 
 export interface AppState {
@@ -12,6 +12,7 @@ export interface AppState {
   sessions: Session[];
   activeSession: Session | null;
   templates: Template[];
+  gyms: Gym[];
 }
 
 /**
@@ -22,7 +23,7 @@ export interface AppStore {
   state: AppState;
 
   /* Session lifecycle */
-  startSession(input?: { name?: string; templateId?: string }): Promise<void>;
+  startSession(input?: { name?: string; templateId?: string; gymId?: string }): Promise<void>;
   deleteSessionById(id: string): Promise<void>;
   resumeSession(): void;
   pauseSession(): void;
@@ -41,6 +42,13 @@ export interface AppStore {
   updateSet(sessionExerciseId: string, setId: string, patch: Partial<SetEntry>): Promise<void>;
   removeSet(sessionExerciseId: string, setId: string): Promise<void>;
   toggleSetComplete(sessionExerciseId: string, setId: string): Promise<void>;
+
+  /* Gyms */
+  createGym(name: string, notes?: string): Promise<Gym>;
+  renameGym(id: string, name: string): Promise<void>;
+  deleteGym(id: string): Promise<void>;
+  /** '' selects "all gyms". */
+  selectGym(gymId: string): void;
 
   /* Settings — fire-and-forget; storage failures flip the read-only banner */
   setUnits(units: 'kg' | 'lb'): void;

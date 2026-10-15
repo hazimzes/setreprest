@@ -50,6 +50,7 @@ function validBackup(overrides: Record<string, unknown> = {}): Record<string, un
     schemaVersion: BACKUP_SCHEMA_VERSION,
     exportedAt: 5000,
     data: {
+      gyms: [],
       exercises: [exercise],
       sessions: [session],
       templates: [template],
@@ -85,7 +86,7 @@ describe('backup validation', () => {
   it('rejects dangling exercise reference in session', async () => {
     const broken = structuredClone(session);
     broken.exercises[0]!.exerciseId = 'missing-ex';
-    const data = { exercises: [exercise], sessions: [broken], templates: [], settings: null };
+    const data = { gyms: [], exercises: [exercise], sessions: [broken], templates: [], settings: null };
     const backup = validBackup({ data, checksum: await computeChecksum(data) });
     await expect(validateBackupFile(backup)).rejects.toThrow(/missing exercise/);
   });
@@ -93,7 +94,7 @@ describe('backup validation', () => {
   it('rejects invalid enum in set entry', async () => {
     const broken = structuredClone(session);
     (broken.exercises[0]!.sets[0] as unknown as Record<string, unknown>).type = 'junk';
-    const data = { exercises: [exercise], sessions: [broken], templates: [], settings: null };
+    const data = { gyms: [], exercises: [exercise], sessions: [broken], templates: [], settings: null };
     const backup = validBackup({ data, checksum: await computeChecksum(data) });
     await expect(validateBackupFile(backup)).rejects.toThrow(/invalid session entry/);
   });
@@ -101,7 +102,7 @@ describe('backup validation', () => {
   it('rejects invalid RPE value', async () => {
     const broken = structuredClone(session);
     (broken.exercises[0]!.sets[0] as unknown as Record<string, unknown>).rpe = 7.3;
-    const data = { exercises: [exercise], sessions: [broken], templates: [], settings: null };
+    const data = { gyms: [], exercises: [exercise], sessions: [broken], templates: [], settings: null };
     const backup = validBackup({ data, checksum: await computeChecksum(data) });
     await expect(validateBackupFile(backup)).rejects.toThrow(/invalid session entry/);
   });

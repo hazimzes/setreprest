@@ -1,6 +1,7 @@
-import type { AppSettings, Exercise, Session, Template } from './models';
+import type { AppSettings, Exercise, Gym, Session, Template } from './models';
 import {
   validateExerciseShape,
+  validateGymShape,
   validateSessionShape,
   validateSettingsShape,
   validateTemplateShape,
@@ -9,9 +10,10 @@ import {
 
 export const BACKUP_APP_TAG = 'setreprest';
 /** Bump only when the backup schema itself changes (follows the DB schema version). */
-export const BACKUP_SCHEMA_VERSION = 1;
+export const BACKUP_SCHEMA_VERSION = 2;
 
 export interface BackupData {
+  gyms: Gym[];
   exercises: Exercise[];
   sessions: Session[];
   templates: Template[];
@@ -87,6 +89,11 @@ export async function validateBackupFile(parsed: unknown): Promise<BackupFile> {
   ) {
     throw new ValidationError('Backup is missing exercises, sessions, or templates.');
   }
+  // gyms were added in backup schema v2; v1 backups simply have none.
+  const gyms = Array.isArray(d.gyms) ? (d.gyms as unknown[]) : [];
+  if (!gyms.every(validateGymShape)) {
+    throw new ValidationError('Backup contains an invalid gym entry.');
+  }
   if (d.settings !== null && !validateSettingsShape(d.settings)) {
     throw new ValidationError('Backup settings are invalid.');
   }
@@ -124,6 +131,7 @@ export async function validateBackupFile(parsed: unknown): Promise<BackupFile> {
   }
 
   const data = {
+    gyms: gyms as Gym[],
     exercises: exercises as Exercise[],
     sessions: sessions as Session[],
     templates: templates as Template[],

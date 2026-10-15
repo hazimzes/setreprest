@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Bar,
@@ -20,7 +20,7 @@ import {
   personalRecordTimeline,
   setVolume,
 } from '../domain/calculations';
-import { Button, EmptyState, useToast } from '../components/ui';
+import { Button, Chip, EmptyState, useToast } from '../components/ui';
 
 /** Chart chrome driven by theme tokens; series color validated per theme (dataviz band). */
 const AXIS = { stroke: 'var(--app-muted)', fontSize: 11 } as const;
@@ -30,14 +30,20 @@ const SERIES = 'var(--app-chart)';
 export function ExerciseDetailPage() {
   const { id } = useParams<{ id: string }>();
   const store = useAppStore();
-  const { sessions, exercises, settings, activeSession } = store.state;
+  const { sessions, exercises, settings, activeSession, gyms } = store.state;
   const navigate = useNavigate();
   const toast = useToast();
 
   const exercise = exercises.find((e) => e.id === id);
+  const [gymFilter, setGymFilter] = useState('');
   const relevantSessions = useMemo(
-    () => sessions.filter((s) => s.exercises.some((ex) => ex.exerciseId === id)),
-    [sessions, id]
+    () =>
+      sessions.filter(
+        (s) =>
+          s.exercises.some((ex) => ex.exerciseId === id) &&
+          (gymFilter === '' || s.gymId === gymFilter)
+      ),
+    [sessions, id, gymFilter]
   );
   const prTimeline = useMemo(
     () => (id ? personalRecordTimeline(sessions, id) : []),
@@ -116,9 +122,22 @@ export function ExerciseDetailPage() {
         </div>
       </header>
 
+      {gyms.length > 0 && (
+        <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter progress by gym">
+          <Chip active={gymFilter === ''} onClick={() => setGymFilter('')}>All gyms</Chip>
+          {gyms.map((g) => (
+            <Chip key={g.id} active={gymFilter === g.id} onClick={() => setGymFilter(g.id)}>
+              {g.name}
+            </Chip>
+          ))}
+        </div>
+      )}
+
       {allTime && (
         <section className="rounded-2xl border border-accent/40 bg-accent-soft p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted">Personal record</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">
+            Personal record{gymFilter ? ` — ${gyms.find((g) => g.id === gymFilter)?.name ?? ''}` : ''}
+          </p>
           <p className="tnum mt-1 text-2xl font-semibold">
             {allTime.candidate.set.weight} {settings.units} × {allTime.candidate.set.reps}
           </p>
@@ -130,7 +149,9 @@ export function ExerciseDetailPage() {
       )}
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold">Estimated 1RM progression</h2>
+        <h2 className="text-sm font-semibold">
+          Estimated 1RM progression{gymFilter ? ` — ${gyms.find((g) => g.id === gymFilter)?.name ?? ''}` : ''}
+        </h2>
         {e1rmData.filter((d) => d.e1rm !== null).length >= 2 ? (
           <div className="rounded-2xl border border-line bg-surface p-3">
             <ResponsiveContainer width="100%" height={180}>
@@ -175,7 +196,9 @@ export function ExerciseDetailPage() {
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold">Volume per session</h2>
+        <h2 className="text-sm font-semibold">
+          Volume per session{gymFilter ? ` — ${gyms.find((g) => g.id === gymFilter)?.name ?? ''}` : ''}
+        </h2>
         {volumeData.length >= 2 ? (
           <div className="rounded-2xl border border-line bg-surface p-3">
             <ResponsiveContainer width="100%" height={160}>

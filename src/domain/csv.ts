@@ -5,6 +5,7 @@ import type { Session, Units } from './models';
 export const CSV_HEADERS = [
   'date',
   'session_name',
+  'gym',
   'exercise',
   'set_type',
   'weight',
@@ -28,15 +29,18 @@ function escapeCsvField(value: string): string {
 export function sessionToCsvRows(
   session: Session,
   exerciseName: (id: string) => string,
-  units: Units
+  units: Units,
+  gymName?: (id: string) => string
 ): string[][] {
   const rows: string[][] = [];
   for (const ex of session.exercises) {
     const name = exerciseName(ex.exerciseId);
+    const gym = session.gymId && gymName ? gymName(session.gymId) : '';
     for (const set of ex.sets) {
       rows.push([
         new Date(session.startedAt).toISOString(),
         session.name,
+        gym,
         name,
         setTypeLabel(set.type),
         String(set.weight),
@@ -55,12 +59,13 @@ export function sessionToCsvRows(
 export function buildHistoryCsv(
   sessions: Session[],
   exerciseName: (id: string) => string,
-  units: Units
+  units: Units,
+  gymName?: (id: string) => string
 ): string {
   const lines: string[] = [CSV_HEADERS.join(',')];
   const ordered = [...sessions].sort((a, b) => b.startedAt - a.startedAt);
   for (const session of ordered) {
-    for (const row of sessionToCsvRows(session, exerciseName, units)) {
+    for (const row of sessionToCsvRows(session, exerciseName, units, gymName)) {
       lines.push(row.map(escapeCsvField).join(','));
     }
   }

@@ -4,6 +4,7 @@ import {
   SET_TYPES,
   type AppSettings,
   type Exercise,
+  type Gym,
   type Session,
   type SetEntry,
   type SetType,
@@ -31,6 +32,19 @@ export function isPositiveNumber(n: unknown): n is number {
 
 export function isIsoDate(s: unknown): s is string {
   return typeof s === 'string' && s.length > 0;
+}
+
+export function validateGymShape(g: unknown): g is Gym {
+  if (typeof g !== 'object' || g === null) return false;
+  const x = g as Record<string, unknown>;
+  return (
+    typeof x.id === 'string' &&
+    typeof x.name === 'string' &&
+    x.name.length > 0 &&
+    (x.notes === undefined || typeof x.notes === 'string') &&
+    typeof x.createdAt === 'number' &&
+    Number.isFinite(x.createdAt)
+  );
 }
 
 export function validateExerciseShape(e: unknown): e is Exercise {
@@ -74,6 +88,7 @@ export function validateSessionShape(s: unknown): s is Session {
   ) {
     return false;
   }
+  if (x.gymId !== undefined && typeof x.gymId !== 'string') return false;
   if (typeof x.startedAt !== 'number' || !Number.isFinite(x.startedAt)) return false;
   if (typeof x.accumulatedActiveMs !== 'number' || (x.accumulatedActiveMs as number) < 0) {
     return false;
@@ -115,7 +130,8 @@ export function validateSettingsShape(s: unknown): s is AppSettings {
     Number.isFinite(x.defaultRestSec) &&
     (x.defaultRestSec as number) > 0 &&
     typeof x.restTimerEnabled === 'boolean' &&
-    Number.isInteger(x.seededVersion)
+    Number.isInteger(x.seededVersion) &&
+    (x.selectedGymId === undefined || x.selectedGymId === '' || typeof x.selectedGymId === 'string')
   );
 }
 

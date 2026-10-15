@@ -114,9 +114,9 @@ test('template start copies targets; template stays unchanged', async ({ page })
   await page.getByRole('button', { name: 'Save template' }).click();
   await expect(page.getByText('Push A')).toBeVisible();
 
-  // Start from it via Home chips
+  // Start from it via Home chips (exact match avoids Copy/Delete aria-labels)
   await page.getByRole('link', { name: 'Home' }).click();
-  await page.getByRole('button', { name: /Push A/ }).click();
+  await page.getByRole('button', { name: /^Push A/ }).first().click();
   await page.waitForURL('**/setreprest/#/workout');
   await expect(page.getByText(/4 sets/)).toBeVisible();
 
@@ -210,7 +210,7 @@ test('CSV export contains header and set rows', async ({ page }) => {
     ? await (await import('node:fs/promises')).readFile((await download.path())!, 'utf8')
     : '';
   expect(text.charCodeAt(0)).toBe(0xfeff);
-  expect(text).toContain('date,session_name,exercise,set_type,weight,unit,reps,rpe,completed,notes');
+  expect(text).toContain('date,session_name,gym,exercise,set_type,weight,unit,reps,rpe,completed,notes');
   expect(text).toContain('Barbell Row');
 });
 
@@ -274,3 +274,61 @@ async function startEmptyWorkoutFromHome(page: Page) {
   await page.getByRole('button', { name: 'Start empty workout' }).click();
   await page.waitForURL('**/setreprest/#/workout');
 }
+
+test('gym tabs: create gym → tagged workout → per-gym history and PR filtering', async ({ page }) => {
+  await page.goto(APP);
+  await dismissSWOfferIfAny(page);
+
+  // Create two gyms from the Home tabs
+  for (const gym of ['Fitness First', 'Anytime JB']) {
+    await page.getByRole('button', { name: 'Add gym' }).first().click();
+    await page.getByLabel('Gym name').fill(gym);
+    await page.getByRole('dialog', { name: 'New gym' }).getByRole('button', { name: 'Add', exact: true }).click();
+    await expect(page.getByRole('button', { name: gym })).toBeVisible();
+  }
+
+  // Select Fitness First and start a workout
+  await page.getByRole('button', { name: 'Fitness First' }).click();
+  await expect(page.getByRole('button', { name: /Start workout at Fitness First/ })).toBeVisible();
+  await page.getByRole('button', { name: /Start workout at Fitness First/ }).click();
+  await page.waitForURL('**/setreprest/#/workout');
+  await expect(page.getByText('Fitness First')).toBeVisible(); // gym badge in workout header
+
+  // Log one set
+  await page.getByRole('button', { name: 'Add exercise', exact: false }).first().click();
+  await page.getByLabel('Search exercises').fill('Deadlift');
+  await page.getByRole('button', { name: 'Deadlift' }).first().click();
+  await page.getByRole('button', { name: '+ Add set' }).click();
+  await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('180');
+  await page.getByLabel('Set 1 reps', { exact: true }).fill('3');
+  await page.getByLabel('Mark set 1 complete').click();
+  await page.getByRole('button', { name: 'Finish workout' }).click();
+  await page
+    .getByRole('dialog', { name: 'Finish workout?' })
+    .getByRole('button', { name: 'Finish' })
+    .click();
+  await page.waitForURL('**/setreprest/#/history');
+
+  // History shows the gym badge and the gym filter works
+  await expect(page.getByText('Fitness First').first()).toBeVisible();
+  await page.getByRole('group', { name: 'Filter by gym' }).getByRole('button', { name: 'Anytime JB' }).click();
+  await expect(page.getByText('No workouts yet', { exact: false }).first()).toBeVisible();
+  await page.getByRole('group', { name: 'Filter by gym' }).getByRole('button', { name: 'Fitness First' }).click();
+  await expect(page.getByText('Workout —').first()).toBeVisible();
+
+  // Per-gym analytics on the exercise page (via Library)
+  await page.getByRole('link', { name: 'Library' }).click();
+  await page.getByLabel('Search exercises').fill('Deadlift');
+  await page.getByRole('link', { name: /^Deadlift/ }).first().click();
+  await page.waitForURL('**/setreprest/#/library/**');
+  await expect(page.getByText(/Personal record/)).toBeVisible();
+  await page.getByRole('group', { name: 'Filter progress by gym' }).getByRole('button', { name: 'Anytime JB' }).click();
+  await expect(page.getByText('No logged sessions yet.')).toBeVisible();
+  await page.getByRole('group', { name: 'Filter progress by gym' }).getByRole('button', { name: 'Fitness First' }).click();
+  await expect(page.getByText(/180/).first()).toBeVisible();
+
+  // Selection persists across reload
+  await page.goto(APP);
+  await dismissSWOfferIfAny(page);
+  await expect(page.getByRole('button', { name: 'Fitness First', exact: true })).toHaveAttribute('aria-pressed', 'true');
+});

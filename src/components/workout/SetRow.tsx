@@ -1,9 +1,42 @@
 import { useState } from 'react';
 import type { SetEntry, Units } from '../../domain/models';
 import { setTypeLabel } from '../../domain/validation';
-import { Button, NumberField, Sheet } from '../ui';
+import { Button, Sheet } from '../ui';
 
-const WEIGHT_STEPS: Record<Units, number> = { kg: 2.5, lb: 5 };
+/**
+ * Compact type-in field for set rows. Stepper buttons don't fit next to the
+ * other row controls on phone widths — the numeric keypad is the input method.
+ */
+function SetInput({
+  label,
+  value,
+  onChange,
+  suffix,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  suffix: string;
+}) {
+  return (
+    <div className="flex h-11 min-w-0 flex-1 items-center rounded-xl border border-line bg-raised">
+      <input
+        type="number"
+        inputMode="decimal"
+        aria-label={label}
+        className="tnum h-full w-full min-w-0 bg-transparent px-1.5 text-center text-sm outline-none"
+        value={Number.isFinite(value) ? String(value) : ''}
+        onChange={(e) => {
+          const parsed = parseFloat(e.target.value);
+          onChange(Number.isFinite(parsed) ? parsed : 0);
+        }}
+      />
+      <span className="shrink-0 pr-2 text-[10px] text-muted" aria-hidden="true">
+        {suffix}
+      </span>
+    </div>
+  );
+}
 
 export function SetRow({
   index,
@@ -36,25 +69,17 @@ export function SetRow({
       <span className={`shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${typeTone}`}>
         {setTypeLabel(set.type)}
       </span>
-      <NumberField
+      <SetInput
         label={`Set ${index + 1} weight in ${units}`}
         value={set.weight}
         onChange={(v) => onUpdate({ weight: v })}
-        step={WEIGHT_STEPS[units]}
-        min={0}
-        max={1000}
         suffix={units}
-        className="min-w-0 flex-1"
       />
-      <NumberField
+      <SetInput
         label={`Set ${index + 1} reps`}
         value={set.reps}
         onChange={(v) => onUpdate({ reps: Math.round(v) })}
-        step={1}
-        min={0}
-        max={200}
         suffix="reps"
-        className="min-w-0 flex-1"
       />
       <button
         onClick={onToggle}

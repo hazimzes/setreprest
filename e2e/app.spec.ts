@@ -25,6 +25,16 @@ async function startEmptyWorkout(page: Page) {
   await page.waitForURL('**/setreprest/#/workout');
 }
 
+async function skipRest(page: Page) {
+  // Completing the last set opens the fullscreen rest overlay — dismiss it.
+  const skip = page.getByRole('button', { name: 'Skip rest' });
+  await skip.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+  if (await skip.isVisible().catch(() => false)) {
+    await skip.click();
+    await skip.waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  }
+}
+
 async function addExerciseByName(page: Page, name: string) {
   await page.getByRole('button', { name: 'Add exercise', exact: false }).first().click();
   await page.getByLabel('Search exercises').fill(name);
@@ -56,6 +66,7 @@ test('start → add exercise → log sets → finish → history shows correct v
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('100');
   await page.getByLabel('Set 1 reps', { exact: true }).fill('5');
   await page.getByLabel('Mark set 1 complete').click();
+  await skipRest(page);
 
   // Auto-follow set appears prefilled with 100 x 5
   await expect(page.getByLabel('Set 2 weight in kg', { exact: true })).toHaveValue('100');
@@ -63,6 +74,7 @@ test('start → add exercise → log sets → finish → history shows correct v
 
   // Complete the follow-up too → volume 1000
   await page.getByLabel('Mark set 2 complete').click();
+  await skipRest(page);
   await expect(page.getByText(/volume 1,?000/).first()).toBeVisible();
 
   await page.getByRole('button', { name: 'Finish workout' }).click();
@@ -81,6 +93,7 @@ test('this-week card: today fills after finishing a workout', async ({ page }) =
   await addExerciseByName(page, 'Plank');
   await page.getByRole('button', { name: 'Add set' }).click();
   await page.getByLabel('Mark set 1 complete').click();
+  await skipRest(page);
   await page.getByRole('button', { name: 'Finish workout' }).click();
   await page
     .getByRole('dialog', { name: 'Finish workout?' })
@@ -165,6 +178,7 @@ test('substitution keeps the original sets attributed to the original exercise',
   await page.getByRole('button', { name: 'Add set' }).click();
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('120');
   await page.getByLabel('Mark set 1 complete').click();
+  await skipRest(page);
 
   // Substitute
   await page.getByLabel('Barbell Squat options').click();
@@ -186,6 +200,7 @@ test('backup export → reset → restore round-trips data', async ({ page }) =>
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('150');
   await page.getByLabel('Set 1 reps', { exact: true }).fill('3');
   await page.getByLabel('Mark set 1 complete').click();
+  await skipRest(page);
   await page.getByRole('button', { name: 'Finish workout' }).click();
   await page
     .getByRole('dialog', { name: 'Finish workout?' })
@@ -227,6 +242,7 @@ test('CSV export contains header and set rows', async ({ page }) => {
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('70');
   await page.getByLabel('Set 1 reps', { exact: true }).fill('10');
   await page.getByLabel('Mark set 1 complete').click();
+  await skipRest(page);
   await page.getByRole('button', { name: 'Finish workout' }).click();
   await page
     .getByRole('dialog', { name: 'Finish workout?' })
@@ -335,6 +351,7 @@ test('gym tabs: create gym → tagged workout → per-gym history and PR filteri
   await page.getByLabel('Set 1 weight in kg', { exact: true }).fill('180');
   await page.getByLabel('Set 1 reps', { exact: true }).fill('3');
   await page.getByLabel('Mark set 1 complete').click();
+  await skipRest(page);
   await page.getByRole('button', { name: 'Finish workout' }).click();
   await page
     .getByRole('dialog', { name: 'Finish workout?' })

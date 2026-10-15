@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 
-/** Countdown pill shown between sets. Skippable, extendable in 15 s steps. */
+/**
+ * Fullscreen rest overlay between sets: blurred dimmed backdrop, big centered
+ * countdown ring, +15s / Skip controls. Tapping the backdrop skips.
+ */
 export function RestTimer({
   seconds,
   onDone,
@@ -28,33 +31,51 @@ export function RestTimer({
   }, [remaining, onDone]);
 
   const pct = seconds > 0 ? remaining / seconds : 0;
+  const R = 88;
+  const C = 2 * Math.PI * R;
+
   return (
     <div
       role="timer"
-      aria-live="off"
       aria-label={`Rest timer, ${remaining} seconds remaining`}
-      className="fixed inset-x-4 bottom-[74px] z-40 mx-auto flex max-w-md items-center gap-3 rounded-[10px] border border-line-strong bg-surface px-4 py-3 shadow-lg"
+      className="fixed inset-0 z-50 flex cursor-pointer flex-col items-center justify-center gap-8 bg-bg/70 backdrop-blur-xl"
+      onClick={onSkip}
     >
-      <svg width="34" height="34" viewBox="0 0 36 36" aria-hidden="true" className="shrink-0 -rotate-90">
-        <circle cx="18" cy="18" r="15" fill="none" stroke="var(--app-line)" strokeWidth="3" />
-        <circle
-          cx="18" cy="18" r="15" fill="none"
-          stroke="var(--app-accent)" strokeWidth="3" strokeLinecap="round"
-          strokeDasharray={`${2 * Math.PI * 15}`}
-          strokeDashoffset={`${2 * Math.PI * 15 * (1 - pct)}`}
-          className="transition-[stroke-dashoffset] duration-1000 ease-linear"
-        />
-      </svg>
-      <div className="min-w-0 flex-1">
-        <p className="tnum text-base font-semibold leading-none">{remaining}s</p>
-        <p className="microlabel mt-0.5">Rest</p>
+      <div className="relative">
+        <svg width="220" height="220" viewBox="0 0 220 220" aria-hidden="true" className="-rotate-90">
+          <circle cx="110" cy="110" r={R} fill="none" stroke="var(--app-line)" strokeWidth="6" />
+          <circle
+            cx="110" cy="110" r={R} fill="none"
+            stroke="var(--app-accent)" strokeWidth="6" strokeLinecap="round"
+            strokeDasharray={C}
+            strokeDashoffset={C * (1 - pct)}
+            className="transition-[stroke-dashoffset] duration-1000 ease-linear"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <p className="tnum text-6xl font-semibold tabular-nums leading-none tracking-tight">{remaining}</p>
+          <p className="microlabel mt-2">seconds rest</p>
+        </div>
       </div>
-      <button className="rounded-[8px] border border-line px-3 py-2 text-xs font-medium hover:bg-raised" onClick={() => onExtend(15)}>
-        +15s
-      </button>
-      <button className="rounded-[8px] bg-accent px-3.5 py-2 text-xs font-semibold text-accent-ink" onClick={onSkip}>
-        Skip
-      </button>
+
+      <div className="flex items-center gap-3">
+        <button
+          className="h-11 rounded-[8px] border border-line-strong bg-surface px-5 text-sm font-medium text-fg transition-colors hover:bg-raised"
+          onClick={(e) => { e.stopPropagation(); onExtend(15); }}
+        >
+          +15s
+        </button>
+        <button
+          className="h-11 rounded-[8px] bg-accent px-8 text-sm font-semibold text-accent-ink transition-[filter] hover:brightness-110 active:brightness-95"
+          onClick={(e) => { e.stopPropagation(); onSkip(); }}
+        >
+          Skip rest
+        </button>
+      </div>
+
+      <p className="absolute inset-x-0 bottom-10 text-center text-xs text-muted">
+        tap anywhere to skip
+      </p>
     </div>
   );
 }

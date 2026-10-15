@@ -43,7 +43,8 @@ Hevy-style set logging. Principles, in priority order:
 - Exercise panel: 13px semibold header, tnum meta line, column labels
   SET / WEIGHT / REPS / DONE over Hevy-style rows; warm-up/drop sets marked with a
   9px W/D letter, not a pill.
-- Rest pill: raised surface, hairline border, 6px inner controls.
+- Rest: fullscreen focus overlay — dimmed blurred backdrop, large countdown ring,
+  +15s / Skip controls, tap-anywhere-to-skip.
 
 ### Progress
 - Verdict panel (accent text only when improving), 3 stat tiles, then chart panels.

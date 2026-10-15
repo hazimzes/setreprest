@@ -92,7 +92,7 @@ production build PASS (precache 16 entries, base `/setreprest/` verified in outp
 | 5.2 | Production build succeeds; `dist/index.html` asset URLs and favicon/manifest links use `/setreprest/` base; lazy chart chunk split | PASS |
 | 5.3 | Service worker emitted (`dist/sw.js`, `dist/workbox-*.js`, `manifest.webmanifest`), icons present | PASS |
 | 5.4 | GitHub Actions workflow: YAML lint passes, triggers on push to main, uses `VITE_BASE_PATH` override | PASS |
-| 5.5 | Actual Pages deployment | NOT RUN — requires your GitHub repository; follow docs/DEPLOYMENT.md, then verify with the checklist there |
+| 5.5 | Actual Pages deployment | PASS — workflow green on github.com/hazimzes/setreprest, site live at https://hazimzes.github.io/setreprest/ (200 on /, sw.js, manifest; asset URLs under /setreprest/; offline reload boots app, verified in Chromium) |
 
 ## Known limitations (by design)
 

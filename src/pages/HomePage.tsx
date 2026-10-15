@@ -39,9 +39,12 @@ export function HomePage() {
   const recent = visibleSessions.filter((s) => s.startedAt >= fourWeeksAgo);
 
   return (
-    <div className="space-y-5">
-      <ThisWeekCard sessions={visibleSessions} units={settings.units} />
+    <div className="grid grid-cols-2 gap-2">
+      <div className="col-span-2">
+        <ThisWeekCard sessions={visibleSessions} units={settings.units} />
+      </div>
 
+      <div className="col-span-2">
       <GymTabs
         gyms={gyms}
         selected={selectedGym}
@@ -49,9 +52,10 @@ export function HomePage() {
         onSelect={(id) => store.selectGym(id)}
         onCreate={(name) => store.createGym(name).then(() => undefined)}
       />
+      </div>
 
       {activeSession ? (
-        <section className="rounded-[10px] border border-line-strong bg-raised p-5">
+        <section className="col-span-2 rounded-[10px] border border-line bg-surface p-4">
           <p className="microlabel text-accent">Workout in progress</p>
           <h2 className="mt-1 truncate text-[15px] font-semibold tracking-tight">{activeSession.name}</h2>
           <p className="tnum mt-1 text-[13px] text-secondary">
@@ -59,7 +63,7 @@ export function HomePage() {
             {countCompletedSets(activeSession)} sets ·{' '}
             {Math.round(sessionVolume(activeSession) * 10) / 10} {settings.units}
           </p>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-3 flex gap-2">
             <Button variant="primary" className="flex-1" onClick={() => navigate('/workout')}>
               Continue workout
             </Button>
@@ -67,10 +71,10 @@ export function HomePage() {
           </div>
         </section>
       ) : (
-        <section className="space-y-3">
+        <>
           <Button
             variant="primary"
-            className="h-12 w-full text-sm"
+            className="col-span-2 h-12 w-full text-sm"
             onClick={() =>
               void store
                 .startSession({ gymId: selectedGym || undefined })
@@ -81,13 +85,13 @@ export function HomePage() {
             {selectedGym ? `Start workout at ${gymName(selectedGym)}` : 'Start empty workout'}
           </Button>
           {templates.length > 0 && (
-            <div className="space-y-1.5">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted">Start from template</p>
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <section className="col-span-2 rounded-[10px] border border-line bg-surface p-4">
+              <p className="microlabel">Start from template</p>
+              <div className="scrollbar-none mt-2 flex gap-2 overflow-x-auto pb-1">
                 {templates.slice(0, 8).map((t) => (
                   <button
                     key={t.id}
-                    className="shrink-0 rounded-[8px] border border-line bg-surface px-3.5 py-2.5 text-sm hover:bg-raised disabled:opacity-50"
+                    className="shrink-0 rounded-[8px] border border-line bg-raised px-3 py-2 text-[13px] font-medium hover:bg-hover disabled:opacity-50"
                     disabled={!store.state.storageAvailable}
                     onClick={() =>
                       void store
@@ -96,28 +100,28 @@ export function HomePage() {
                     }
                   >
                     {t.name}
-                    <span className="ml-2 text-xs text-muted">{t.exercises.length} ex</span>
+                    <span className="ml-1.5 text-[11px] text-muted">{t.exercises.length} ex</span>
                   </button>
                 ))}
               </div>
-            </div>
+            </section>
           )}
-        </section>
+        </>
       )}
 
       {!store.state.storageAvailable && (
-        <p className="rounded-[8px] border border-danger/30 bg-danger/10 px-4 py-3 text-xs text-danger">
+        <p className="col-span-2 rounded-[10px] border border-danger/30 bg-danger/10 px-4 py-3 text-xs text-danger">
           Storage unavailable — starting workouts is disabled. See Settings for details.
         </p>
       )}
 
       {exercises.length === 0 && (
-        <p className="rounded-[8px] border border-line bg-surface px-4 py-3 text-xs text-muted">
+        <p className="col-span-2 rounded-[10px] border border-line bg-surface px-4 py-3 text-xs text-muted">
           Exercise library is empty. Pull-to-refresh won't fix it — restore a backup in Settings or create custom exercises in the Library.
         </p>
       )}
 
-      <section className="space-y-2">
+      <section className="col-span-2 space-y-2">
         <div className="flex items-baseline justify-between">
           <h3 className="text-[13px] font-semibold tracking-tight">Last workout</h3>
           <Link to="/history" className="text-xs text-muted underline-offset-2 hover:underline">
@@ -154,7 +158,7 @@ export function HomePage() {
       </section>
 
       {recent.length > 0 && (
-        <section className="space-y-2">
+        <section className="col-span-2 space-y-2 rounded-[10px] border border-line bg-surface p-4">
           <h3 className="text-[13px] font-semibold tracking-tight">
             Last 4 weeks{selectedGym ? ` — ${gymName(selectedGym)}` : ''}
           </h3>

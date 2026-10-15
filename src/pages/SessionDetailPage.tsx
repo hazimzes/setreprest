@@ -26,8 +26,8 @@ export function SessionDetailPage() {
   const nameOf = (exId: string) => exercises.find((e) => e.id === exId)?.name ?? 'Unknown exercise';
 
   return (
-    <div className="space-y-4">
-      <header className="space-y-1">
+    <div className="grid grid-cols-2 gap-2">
+      <header className="col-span-2 space-y-1 rounded-[10px] border border-line bg-surface p-4">
         <Link to="/history" className="text-xs text-muted hover:underline">← History</Link>
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -54,7 +54,7 @@ export function SessionDetailPage() {
         const pr = bestSet(slot.sets);
         const e1rm = pr ? estimateOneRepMax(pr.set.weight, pr.set.reps) : null;
         return (
-          <section key={slot.id} className="rounded-[10px] border border-line bg-surface p-4">
+          <section key={slot.id} className="col-span-2 rounded-[10px] border border-line bg-surface p-4">
             <div className="flex items-baseline justify-between gap-2">
               <h2 className="truncate text-[13px] font-semibold tracking-tight">
                 {nameOf(slot.exerciseId)}

@@ -81,8 +81,8 @@ export function ProgressPage() {
   if (status === 'loading') return null;
 
   return (
-    <div className="space-y-5">
-      <header className="flex items-baseline justify-between">
+    <div className="grid grid-cols-2 gap-2">
+      <header className="col-span-2 flex items-baseline justify-between">
         <h1 className="text-[15px] font-semibold tracking-tight">Progress</h1>
         <p className="tnum text-[11px] text-muted">
           {gymFilter ? gyms.find((g) => g.id === gymFilter)?.name : 'All gyms'}
@@ -90,7 +90,7 @@ export function ProgressPage() {
       </header>
 
       {gyms.length > 0 && (
-        <div className="scrollbar-none flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter progress by gym">
+        <div className="scrollbar-none col-span-2 flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter progress by gym">
           <Chip active={gymFilter === ''} onClick={() => setGymFilter('')}>All gyms</Chip>
           {gyms.map((g) => (
             <Chip key={g.id} active={gymFilter === g.id} onClick={() => setGymFilter(g.id)}>
@@ -101,14 +101,14 @@ export function ProgressPage() {
       )}
 
       {visible.length === 0 ? (
-        <EmptyState
+        <div className="col-span-2"><EmptyState
           title="Nothing to measure yet"
           hint="Log a couple of workouts (or load the demo dataset from Settings) and your trends appear here."
-        />
+        /></div>
       ) : (
         <>
           {/* Verdict + headline numbers */}
-          <section className="rounded-[10px] border border-line bg-surface p-4">
+          <section className="col-span-2 rounded-[10px] border border-line bg-surface p-4">
             <div className="flex items-baseline justify-between">
               <div>
                 <MicroLabel>Trailing 4 weeks vs prior</MicroLabel>
@@ -129,7 +129,7 @@ export function ProgressPage() {
             </div>
           </section>
 
-          <section className="grid grid-cols-3 gap-2">
+          <section className="col-span-2 grid grid-cols-3 gap-2">
             <StatTile label="Streak" value={`${streak} wk`} />
             <StatTile
               label="Weekly avg"
@@ -141,12 +141,12 @@ export function ProgressPage() {
           </section>
 
           {/* Weekly volume */}
-          <section className="space-y-2">
+          <section className="col-span-2 rounded-[10px] border border-line bg-surface p-4">
             <div className="flex items-baseline justify-between">
               <h2 className="text-[13px] font-semibold tracking-tight">Weekly volume</h2>
               <VolumeTrend weeks={weeks} units={settings.units} />
             </div>
-            <div className="rounded-[10px] border border-line bg-surface p-3">
+            <div>
               <ResponsiveContainer width="100%" height={160}>
                 <BarChart data={weeks} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                   <CartesianGrid stroke={GRID} vertical={false} />
@@ -164,10 +164,10 @@ export function ProgressPage() {
           </section>
 
           {/* Strength — top lifts weekly e1RM */}
-          <section className="space-y-2">
+          <section className="col-span-2 space-y-2 rounded-[10px] border border-line bg-surface p-4">
             <h2 className="text-[13px] font-semibold tracking-tight">Strength — est. 1RM, top lifts</h2>
             {strengthData.length > 0 ? (
-              <div className="rounded-[10px] border border-line bg-surface p-3">
+              <div>
                 <ResponsiveContainer width="100%" height={200}>
                   <LineChart data={strengthData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                     <CartesianGrid stroke={GRID} vertical={false} />
@@ -202,10 +202,10 @@ export function ProgressPage() {
           </section>
 
           {/* Muscle split */}
-          <section className="space-y-2">
+          <section className="col-span-2 space-y-2 rounded-[10px] border border-line bg-surface p-4">
             <h2 className="text-[13px] font-semibold tracking-tight">Volume by muscle · 4 weeks</h2>
             {muscles.length > 0 ? (
-              <div className="rounded-[10px] border border-line bg-surface p-3">
+              <div>
                 <ResponsiveContainer width="100%" height={Math.max(120, muscles.length * 26)}>
                   <BarChart data={muscles} layout="vertical" margin={{ top: 0, right: 8, bottom: 0, left: 8 }}>
                     <XAxis type="number" hide />
@@ -232,14 +232,14 @@ export function ProgressPage() {
           </section>
 
           {/* Recent PRs */}
-          <section className="space-y-2">
+          <section className="col-span-2 space-y-2 rounded-[10px] border border-line bg-surface p-4">
             <h2 className="text-[13px] font-semibold tracking-tight">Personal records · 4 weeks</h2>
             {prs.length === 0 ? (
               <p className="rounded-[8px] border border-line px-3 py-2.5 text-xs text-muted">
                 No new records this month — heavy weeks ahead.
               </p>
             ) : (
-              <ul className="divide-y divide-line rounded-[10px] border border-line bg-surface">
+              <ul className="divide-y divide-line">
                 {prs.slice(0, 8).map((pr) => (
                   <li key={`${pr.exerciseId}-${pr.date}`} className="flex items-baseline justify-between gap-2 px-3.5 py-2.5">
                     <div className="min-w-0">

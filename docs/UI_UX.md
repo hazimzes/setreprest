@@ -18,10 +18,15 @@ Hevy-style set logging. Principles, in priority order:
    13px; data 13px tabular numerals (`.tnum`); metadata is the uppercase
    `.microlabel` voice (10px, 0.08em tracking). Weight and size carry hierarchy,
    not color.
-6. **Dense lists over padded cards.** Repeating rows live in ONE bordered panel
+6. **Bento layout.** Each screen is one `grid grid-cols-2 gap-2` bento: tiles span
+   columns by importance (wide content = col-span-2, stats = half-width). Uniform
+   10px radius + 2px gaps between tiles; tile chrome (border+surface) only at the
+   bento level, never nested inside another tile. History rows stay a list pattern
+   (reference design).
+7. **Dense lists over padded cards.** Repeating rows live in ONE bordered panel
    separated by `divide-y` dividers (library, history). Only true objects get their
    own panel (an exercise card in a workout).
-7. **Motion:** 150ms color transitions only; `prefers-reduced-motion` collapses all.
+8. **Motion:** 150ms color transitions only; `prefers-reduced-motion` collapses all.
 
 ## Anti-slop checklist (verify before shipping any screen)
 

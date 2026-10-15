@@ -98,8 +98,8 @@ export function ExerciseDetailPage() {
   const inWorkout = activeSession !== null;
 
   return (
-    <div className="space-y-4">
-      <header className="space-y-2">
+    <div className="grid grid-cols-2 gap-2">
+      <header className="col-span-2 space-y-2 rounded-[10px] border border-line bg-surface p-4">
         <Link to="/library" className="text-xs text-muted hover:underline">
           ← Library
         </Link>
@@ -152,7 +152,7 @@ export function ExerciseDetailPage() {
         </section>
       )}
 
-      <section className="space-y-2">
+      <section className="col-span-2 space-y-2">
         <h2 className="text-[13px] font-semibold tracking-tight">
           Estimated 1RM progression{gymFilter ? ` — ${gyms.find((g) => g.id === gymFilter)?.name ?? ''}` : ''}
         </h2>
@@ -199,7 +199,7 @@ export function ExerciseDetailPage() {
         )}
       </section>
 
-      <section className="space-y-2">
+      <section className="col-span-2 space-y-2">
         <h2 className="text-[13px] font-semibold tracking-tight">
           Volume per session{gymFilter ? ` — ${gyms.find((g) => g.id === gymFilter)?.name ?? ''}` : ''}
         </h2>
@@ -238,7 +238,7 @@ export function ExerciseDetailPage() {
         )}
       </section>
 
-      <section className="space-y-2">
+      <section className="col-span-2 space-y-2">
         <h2 className="text-[13px] font-semibold tracking-tight">History</h2>
         {relevantSessions.length === 0 ? (
           <p className="rounded-[8px] border border-line px-4 py-3 text-xs text-muted">

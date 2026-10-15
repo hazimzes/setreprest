@@ -49,14 +49,14 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <header>
+    <div className="grid grid-cols-2 gap-2">
+      <header className="col-span-2">
         <h1 className="text-[15px] font-semibold tracking-tight">Settings</h1>
       </header>
 
-      <section className="space-y-3">
+      <section className="col-span-2 space-y-3 rounded-[10px] border border-line bg-surface p-4">
         <h2 className="text-[13px] font-semibold tracking-tight">Preferences</h2>
-        <div className="rounded-[10px] border border-line bg-surface p-4">
+        <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted">Units</p>
           <Segmented
             ariaLabel="Weight units"
@@ -112,9 +112,9 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="space-y-3">
+      <section className="col-span-2 space-y-3 rounded-[10px] border border-line bg-surface p-4">
         <h2 className="text-[13px] font-semibold tracking-tight">Demo data</h2>
-        <div className="space-y-2 rounded-[10px] border border-line bg-surface p-4">
+        <div className="space-y-2">
           <p className="text-xs leading-relaxed text-muted">
             Loads a sample training block: ~10 weeks of push/pull/legs across three gyms,
             with templates, progression, RPE and personal records — so you can see every
@@ -131,9 +131,9 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="space-y-3">
+      <section className="col-span-2 space-y-3 rounded-[10px] border border-line bg-surface p-4">
         <h2 className="text-[13px] font-semibold tracking-tight">Gyms</h2>
-        <div className="space-y-2 rounded-[10px] border border-line bg-surface p-4">
+        <div className="space-y-2">
           <p className="text-xs text-muted">
             Tag workouts to a gym and keep per-gym history and personal records. Weights are never shared between gyms — equipment differs.
           </p>
@@ -168,9 +168,9 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="space-y-3">
+      <section className="col-span-2 space-y-3 rounded-[10px] border border-line bg-surface p-4">
         <h2 className="text-[13px] font-semibold tracking-tight">Your data</h2>
-        <div className="space-y-2 rounded-[10px] border border-line bg-surface p-4">
+        <div className="space-y-2">
           <p className="text-xs text-muted">
             {sessions.length} workouts · {exercises.length} exercises stored on this device.
           </p>
@@ -222,9 +222,9 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="space-y-2">
+      <section className="col-span-2 space-y-2 rounded-[10px] border border-line bg-surface p-4">
         <h2 className="text-[13px] font-semibold tracking-tight">Where is my data?</h2>
-        <div className="space-y-2 rounded-[10px] border border-line bg-surface p-4 text-xs leading-relaxed text-muted">
+        <div className="space-y-2 text-xs leading-relaxed text-muted">
           <p>
             SetRepRest stores everything locally in your browser (IndexedDB). Nothing is uploaded —
             there is no account and no server.
@@ -248,7 +248,7 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <p className="pb-4 text-center text-[11px] text-muted">SetRepRest · local-first workout tracker</p>
+      <p className="col-span-2 pb-2 pt-1 text-center text-[11px] text-muted">SetRepRest · local-first workout tracker</p>
 
       <ConfirmSheet
         open={resetOpen}

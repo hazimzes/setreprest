@@ -53,7 +53,10 @@ Hevy-style set logging. Principles, in priority order:
 - Library: one divided panel of rows; search h-9; filter chips h-7.
 
 ### History / Session detail
-- Month-grouped rows in divided panels; tnum metadata; gym badges as neutral chips.
+- History rows replicate the reference pattern: raised date tile (weekday micro +
+  big day number), name + `Oct 14 · 1h 3m · 16 sets` meta line, compact volume
+  (8.3k) with unit under, chevron. Grouped under `WEEK OF OCT 5` microlabels.
+- Session detail keeps the set tables with gym badge.
 
 ### Settings
 - Sectioned panels with microlabel field groups; segmented controls use the

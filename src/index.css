@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --app-bg: #f5f6f8;
+  --app-surface: #ffffff;
+  --app-raised: #eef0f3;
+  --app-fg: #171a1f;
+  --app-muted: #5f6873;
+  --app-line: rgba(23, 26, 31, 0.12);
+  --app-accent: #3f7d20;
+  --app-accent-soft: rgba(63, 125, 32, 0.14);
+  --app-accent-ink: #ffffff;
+  --app-danger: #b3261e;
+  /* Chart series color — validated for the light surface (dataviz band L 0.43–0.77). */
+  --app-chart: #3f7d20;
+}
+
+.dark {
+  --app-bg: #0d0f12;
+  --app-surface: #14171c;
+  --app-raised: #1c2027;
+  --app-fg: #e8eaed;
+  --app-muted: #98a1ac;
+  --app-line: rgba(255, 255, 255, 0.09);
+  --app-accent: #c8f169;
+  --app-accent-soft: rgba(200, 241, 105, 0.14);
+  --app-accent-ink: #1a2405;
+  --app-danger: #ff6b61;
+  /* Chart series color — validated for the dark surface (dataviz band L 0.48–0.67). */
+  --app-chart: #699f2f;
+}
+
+@theme inline {
+  --color-bg: var(--app-bg);
+  --color-surface: var(--app-surface);
+  --color-raised: var(--app-raised);
+  --color-fg: var(--app-fg);
+  --color-muted: var(--app-muted);
+  --color-line: var(--app-line);
+  --color-accent: var(--app-accent);
+  --color-accent-soft: var(--app-accent-soft);
+  --color-accent-ink: var(--app-accent-ink);
+  --color-danger: var(--app-danger);
+  --color-chart: var(--app-chart);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--app-bg);
+  color: var(--app-fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Numerals line up in weight/reps inputs and stats */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
